@@ -9,26 +9,29 @@ function createPanelView(testId, buttonTest) {
         title: 'testView',
         content: [
             {
-                'title': 'an action',
-                'type': 'button',
-                'onClick': function() {
+                title: 'an action',
+                type: 'button',
+                onClick: function() {
                     buttonTest = "successful";
                 }
             },
             {
-                'type': 'separator'
+                type: 'separator'
             },
             {
-                'title': 'a checkbox',
-                'type': 'button',
-                'actionType': 'checkbox',
-                'onClick': function() {
+                title: 'a checkbox',
+                type: 'button',
+                actionType: 'checkbox',
+                onClick: function() {
                     //nothing
                 }
             }
         ],
         footer: {
-            title: 'footer'
+            title: 'footer',
+            onClick: function() {
+                buttonTest = "footer";
+            }
         }
     });
 }
@@ -64,6 +67,8 @@ exports.testConstruction = function(assert) {
 
     assert.ok(subview.getElementsByClassName("panel-subview-footer")[0], "Subview footer not created properly");
     assert.equal(subview.getElementsByClassName("panel-subview-footer")[0].getAttribute("label"), 'footer');
+    subview.getElementsByClassName("panel-subview-footer")[0].doCommand();
+    assert.equal(buttonTest, "footer", "Footer command is not executed properly");
 
     pv.dispose();
     
@@ -99,7 +104,20 @@ exports.testDispose = function(assert) {
     assert.ok(!document.getElementById("test-panelview-dispose"), "Panelview wasn't removed properly");
 };
 
-//exports.testShow
-//exports.testHode
+exports.testShow = function(assert) {
+    var pv = createPanelView("test-panelview-show");
+    assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
+    pv.show();
+    assert.ok(pv.isShowing(), "Panelview is either not opened or isShowing doesn't work");
+};
+
+exports.testHode = function(assert) {
+    var pv = createPanelView("test-panelview-hide");
+    pv.show();
+    assert.ok(pv.isShowing(), "Panelview hasn't been opened to run this test properly");
+    pv.hide();
+    assert.ok(!pv.isShowing(), "Panelview hasn't been closed by hide");
+};
 
 require('test').run(exports);
+
