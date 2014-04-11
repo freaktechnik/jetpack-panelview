@@ -130,5 +130,5 @@ exports.testHide = function(assert) {
     assert.ok(!pv.isShowing(), "Panelview hasn't been closed by hide");
 };
 
-require('test').run(exports);
+require('sdk/test').run(exports);
 
