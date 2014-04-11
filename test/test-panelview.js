@@ -9,17 +9,18 @@ function createPanelView(testId, buttonTest) {
         title: 'testView',
         content: [
             {
-                title: 'an action',
+                label: 'an action',
                 type: 'button',
                 onClick: function() {
                     buttonTest = "successful";
                 }
+                //TODO test icon
             },
             {
                 type: 'separator'
             },
             {
-                title: 'a checkbox',
+                label: 'a checkbox',
                 type: 'button',
                 actionType: 'checkbox',
                 onClick: function() {
@@ -33,6 +34,14 @@ function createPanelView(testId, buttonTest) {
                 buttonTest = "footer";
             }
         }
+    });
+}
+
+function createActionButton(buttonId) {
+    return ActionButton({
+        id: buttonId,
+        label: "Test button",
+        icon: "./test-icon.png"
     });
 }
 
@@ -56,7 +65,7 @@ exports.testConstruction = function(assert) {
     content.getElementsByClassName("subviewbutton")[0].doCommand();
     assert.equal(buttonTest, "successful", "Action click handler not working properly");
 
-    assert.ok(content.getElementsByTagName("menuseparator")[0], "Toolbar separator not created");
+    assert.ok(content.getElementsByTagName("toolbarseparator")[0], "Toolbar separator not created");
 
     assert.ok(content.getElementsByClassName("subviewbutton")[1], "Second button not created properly");
     let secondButton = content.getElementsByClassName("subviewbutton")[1];
@@ -77,7 +86,7 @@ exports.testConstruction = function(assert) {
         title:'Another Panelview',
         content: [
             {
-                title: "invalid content item"
+                label: "invalid content item"
             }
         ]
     });
@@ -87,7 +96,7 @@ exports.testConstruction = function(assert) {
         title:'Yet Another Panelview',
         content: [
             {
-                title: "content item with unsupported type",
+                label: "content item with unsupported type",
                 type: "menu"
             }
         ]
@@ -108,12 +117,14 @@ exports.testShow = function(assert) {
     var pv = createPanelView("test-panelview-show");
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
     pv.show();
-    assert.ok(pv.isShowing(), "Panelview is either not opened or isShowing doesn't work");
+    assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
+    pv.show(createActionButton("test-panelview-show-button"));
+    assert.ok(pv.isShowing(), "Panelview did not open");
 };
 
-exports.testHode = function(assert) {
+exports.testHide = function(assert) {
     var pv = createPanelView("test-panelview-hide");
-    pv.show();
+    pv.show(createActionButton("test-panelview-hide-button"));
     assert.ok(pv.isShowing(), "Panelview hasn't been opened to run this test properly");
     pv.hide();
     assert.ok(!pv.isShowing(), "Panelview hasn't been closed by hide");
