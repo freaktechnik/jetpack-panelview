@@ -19,6 +19,7 @@ Required options:
    * __id__: ID of the panelview, has to be unique.
    * __title__: Title of the panelview, displayed on top when opened from the firefox menu.
    * __content__: Array of content items. Content items consist at least of a __type__ attribute, which is either "button" or "separator".
+
      If you choose "button" as type, you need to supply a __label__ and __onClick__ attribute. You can optionally supply __disabled__,__icon__,__ActionType__ (to define the button type) and __accesskey__.
      A "separator" content item can optionally have a property __small__ set to true, to get a smaller separator when opened from the menu.
 Optional options:
@@ -30,7 +31,7 @@ __onClick__ always automatically closes the panelview.
 #### dispose() ####
 Destroys the panelview and its contents and removes it from the window's DOM.
 #### show(button) ####
-Opens the panelview from the supplied button. The button should be an ActionButton or ToggleButton.
+Opens the panelview from the supplied button. The __button__ should be an ActionButton or ToggleButton.
 #### hide() ####
 Hides the panelview if showing. If it is opened as separate panel the panel is closed. If it is opened as subview in the menu the menu goes back to the main view.
 #### isShowing() ####
