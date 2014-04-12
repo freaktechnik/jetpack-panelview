@@ -8,6 +8,8 @@ Even though it could probably contain other things than just menu items, you can
 
 `panelview` exposes a similar API to `sdk/panel`, however it offers less functionality, due to the content restrictions.
 
+For the usage of third party libraries together with the SDK, check out [this Toutorial](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox).
+
 ### Content Items ###
 When constructing a panelview you have to add content items. These may either be buttons or separators.
 ```js
@@ -54,9 +56,9 @@ let pv = PanelView({
 ![panelview spawned from a toolbarbutton](panelview-panel.png)
 ![panelview inside the menu panel](panelview-menu.png)
 
+### Usage with SDK buttons ###
+Currently showing a subview inside the menu panel with the SDK buttons is broken.
 Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed.
-
-For the usage of third party libraries together with the SDK, check out [this Toutorial](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox).
 
 ## Globals ##
 ### Constructors ###
