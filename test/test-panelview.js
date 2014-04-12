@@ -134,6 +134,10 @@ exports.testShow = function(assert) {
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
     assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
 
+    assert.throws(function() {
+        pv.show({});
+    } ,/A subview can only be displayed with a button as anchor/, "Show didn't throw even though it didn't get the required arguments");
+
     let button = createActionButton("test-panelview-show-button")
     pv.show(button);
     assert.ok(pv.isShowing(), "Panelview did not open");
