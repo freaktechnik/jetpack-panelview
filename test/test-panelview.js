@@ -1,6 +1,9 @@
 var { PanelView } = require("./panelview");
 var { ActionButton } = require ("sdk/ui/button/action");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
+const { Cu } = require('chrome');
+const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
+const { getNodeView } = require("sdk/view/core");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -132,7 +135,14 @@ exports.testShow = function(assert) {
     assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
     let button = createActionButton("test-panelview-show-button")
     pv.show(button);
-    assert.ok(pv.isShowing(), "Panelview did not open");    
+    assert.ok(pv.isShowing(), "Panelview did not open");
+
+    pv.hide();
+    assert.ok(!pv.isShowing(),"Panel didn't hide, test results invalid");
+    // move button to menu panel
+    CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
+    pv.show(button);
+    assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
 
     button.destroy();
     pv.destroy();
