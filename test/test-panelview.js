@@ -139,19 +139,28 @@ exports.testShow = function(assert) {
     assert.ok(pv.isShowing(), "Panelview did not open");
 
     pv.hide();
-    assert.ok(!pv.isShowing(),"Panel didn't hide, test results invalid");
+    assert.ok(!pv.isShowing());
+
+    button.on("click", function() {
+        pv.show(button);
+    });
+    button.click();
+    assert.ok(pv.isShowing(), "Panelview did not open after simualting a click on the button");
+
+    pv.hide();
+    assert.ok(!pv.isShowing());
     // move button to menu panel
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
     assert.equal(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
     let window = getMostRecentBrowserWindow();
     window.PanelUI.show();
     pv.show(button);
-    assert.ok(pv.isShowing() && window.PanelUI.multiView.showingSubView, "Panelview did not open in the menu panel");
+    assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
     
     pv.hide();
     assert.ok(!pv.isShowing());
     button.click();
-    assert.ok(pv.isShowing() && window.PanelUI.multiView.showingSubView, "Panelview wasn't opened properly in the menu panel by simulating a click on the button");
+    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button");
 
     button.destroy();
     pv.destroy();
