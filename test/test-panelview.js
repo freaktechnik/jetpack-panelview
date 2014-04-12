@@ -133,6 +133,7 @@ exports.testShow = function(assert) {
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
     assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
+
     let button = createActionButton("test-panelview-show-button")
     pv.show(button);
     assert.ok(pv.isShowing(), "Panelview did not open");
@@ -141,10 +142,16 @@ exports.testShow = function(assert) {
     assert.ok(!pv.isShowing(),"Panel didn't hide, test results invalid");
     // move button to menu panel
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
+    assert.equal(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
     let window = getMostRecentBrowserWindow();
     window.PanelUI.show();
     pv.show(button);
     assert.ok(pv.isShowing() && window.PanelUI.multiView.showingSubView, "Panelview did not open in the menu panel");
+    
+    pv.hide();
+    assert.ok(!pv.isShowing());
+    button.click();
+    assert.ok(pv.isShowing() && window.PanelUI.multiView.showingSubView, "Panelview wasn't opened properly in the menu panel by simulating a click on the button");
 
     button.destroy();
     pv.destroy();
