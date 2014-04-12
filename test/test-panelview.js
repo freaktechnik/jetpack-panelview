@@ -58,7 +58,7 @@ exports.testConstruction = function(assert) {
     let document = getMostRecentBrowserWindow().document;
     assert.ok(document.getElementById(testId),"Panel has not been added to the window");
     assert.equal(testId, pv.id, "Id has not been set correctly");
-    let subview = document.getElementById(testId);
+    let subview = document.getElementById(pv.id);
     
     assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
     assert.equal(subview.getElementsByClassName("panel-subview-header")[0].getAttribute("value"), "testView", "Subview title isn't set properly");
@@ -125,7 +125,8 @@ exports.testDestroy = function(assert) {
     let pv = createPanelView("test-panelview-destroy");
     assert.ok(document.getElementById(pv.id), "Panelview wasn't created properly");
     pv.destroy();
-    assert.ok(!document.getElementById(pv.id), "Panelview wasn't removed properly");
+    // can't use pv.id, as viewFor will not return anything if it has been destroyed properly.
+    assert.ok(!document.getElementById("test-panelview-destroy"), "Panelview wasn't removed properly");
 };
 
 exports.testShow = function(assert) {
