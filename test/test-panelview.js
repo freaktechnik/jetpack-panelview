@@ -2,7 +2,6 @@
 var { PanelView } = require("./panelview");
 var { ActionButton } = require ("sdk/ui/button/action");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
-const { setTimeout, clearTimeout } = require('sdk/timers');
 
 function createPanelView(testId, buttonTest) {
     return PanelView({
@@ -54,6 +53,7 @@ exports.testConstruction = function(assert) {
     
     let document = getMostRecentBrowserWindow().document;
     assert.ok(document.getElementById(testId));
+    assert.equal(testId, pv.id);
     let subview = document.getElementById(testId);
     
     assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
@@ -82,7 +82,7 @@ exports.testConstruction = function(assert) {
 
     pv.dispose();
     
-    let pva= PanelView({
+    let pva = PanelView({
         id:'test-panelview-content-a',
         title:'Another Panelview',
         content: [
@@ -91,7 +91,7 @@ exports.testConstruction = function(assert) {
             }
         ]
     });
-    assert.equal(document.getElementById("test-panelview-content-a").getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no valid item to add");
+    assert.equal(document.getElementById(pva.id).getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no valid item to add");
     pva.dispose();
 
     let pvb = PanelView({
@@ -104,17 +104,17 @@ exports.testConstruction = function(assert) {
             }
         ]
     });
+    assert.equal(document.getElementById(pvb.id).getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no item with a supported type to add");
     pvb.dispose();
-    assert.equal(document.getElementById("test-panelview-content-b").getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no item with a supported type to add");
 };
 
 exports.testDispose = function(assert) {
     let document = getMostRecentBrowserWindow().document;
     assert.ok(!document.getElementById("test-panelview-dispose"), "There already is an element with the desired ID");
     let pv = createPanelView("test-panelview-dispose");
-    assert.ok(document.getElementById("test-panelview-dispose"), "Panelview wasn't created properly");
+    assert.ok(document.getElementById(pv.id), "Panelview wasn't created properly");
     pv.dispose();
-    assert.ok(!document.getElementById("test-panelview-dispose"), "Panelview wasn't removed properly");
+    assert.ok(!document.getElementById(pv.id), "Panelview wasn't removed properly");
 };
 
 exports.testShow = function(assert) {
@@ -144,22 +144,13 @@ exports.testHide = function(assert) {
 
 exports.testShowEvent = function(assert, done) {
     let pv = createPanelView("test-panelview-showevent"),
-        button = createActionButton("test-panelview-showevent"),
-        timeout = setTimeout(function() {
-            assert.fail("Show Event probably never fired");
-
-            button.destroy();
-            pv.dispose();
-
-            done();
-        }, 3000);
+        button = createActionButton("test-panelview-showevent-button");
 
     pv.on("show", function(event) {
         assert.pass("Panelview was successfully opened");
 
         button.destroy();
         pv.dispose();
-        clearTimeout(timeout);
 
         done();
     });
@@ -169,22 +160,13 @@ exports.testShowEvent = function(assert, done) {
 
 exports.testHideEvent = function(assert, done) {
     let pv = createPanelView("test-panelview-hideevent"),
-        button = createActionButton("test-panelview-hideevent"),
-        timeout = setTimeout(function() {
-            assert.fail("Hide Event probably never fired");
-
-            button.destroy();
-            pv.dispose();
-
-            done();
-        }, 3000);
+        button = createActionButton("test-panelview-hideevent-button");
 
     pv.on("hide", function(event) {
         assert.pass("Panelview was successfully closed");
 
         button.destroy();
         pv.dispose();
-        clearTimeout(timeout);
 
         done();
     });
