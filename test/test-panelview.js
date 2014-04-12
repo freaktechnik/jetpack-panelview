@@ -83,31 +83,37 @@ exports.testConstruction = function(assert) {
 
     pv.dispose();
 
-    let pva = PanelView({
-        id:'test-panelview-content-a',
-        title:'Another Panelview',
-        content: [
-            {
-                label: "invalid content item"
-            }
-        ]
-    });
-    assert.equal(document.getElementById(pva.id).getElementsByClassName("panel-subview-body")[0].childNodes.length, 0, "Subview content item added even though there is no valid item to add");
-    pva.dispose();
+    var pva, pvb;
+    try {
+        pva = PanelView({
+            id:'test-panelview-content-a',
+            title:'Another Panelview',
+            content: [
+                {
+                    label: "invalid content item"
+                }
+            ]
+        });
+    }
+    catch(e) {
+        assert.pass("Creating a view with an invalid content item throws an error");
+    }
 
-    let pvb = PanelView({
-        id:'test-panelview-content-b',
-        title:'Yet Another Panelview',
-        content: [
-            {
-                label: "content item with unsupported type",
-                type: "menu"
-            }
-        ]
-    });
-   
-    assert.equal(document.getElementById(pvb.id).getElementsByClassName("panel-subview-body")[0].childNodes.length, 0, "Subview content item added even though there is no item with a supported type to add");
-    pvb.dispose();
+    try {
+        pvb = PanelView({
+            id:'test-panelview-content-b',
+            title:'Yet Another Panelview',
+            content: [
+                {
+                    label: "content item with unsupported type",
+                    type: "menu"
+                }
+            ]
+        });
+    }
+    catch(e) {
+        assert.pass("Creating a view with a content item with an unsuported type throws an error");
+    }
 };
 
 exports.testDispose = function(assert) {
@@ -122,7 +128,7 @@ exports.testDispose = function(assert) {
 exports.testShow = function(assert) {
     let pv = createPanelView("test-panelview-show");
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
-    pv.show();
+    assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
     assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
     let button = createActionButton("test-panelview-show-button")
     pv.show(button);
