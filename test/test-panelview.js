@@ -53,8 +53,8 @@ exports.testConstruction = function(assert) {
     let pv = createPanelView(testId, buttonTest);
     
     let document = getMostRecentBrowserWindow().document;
-    assert.ok(document.getElementById(testId));
-    assert.equal(testId, pv.id);
+    assert.ok(document.getElementById(testId),"Panel has not been added to the window");
+    assert.equal(testId, pv.id, "Id has not been set correctly");
     let subview = document.getElementById(testId);
     
     assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
@@ -82,7 +82,7 @@ exports.testConstruction = function(assert) {
     assert.equal(buttonTest, "footer", "Footer command is not executed properly");
 
     pv.dispose();
-    
+
     let pva = PanelView({
         id:'test-panelview-content-a',
         title:'Another Panelview',
@@ -92,7 +92,7 @@ exports.testConstruction = function(assert) {
             }
         ]
     });
-    assert.equal(document.getElementById(pva.id).getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no valid item to add");
+    assert.equal(document.getElementById(pva.id).getElementsByClassName("panel-subview-body")[0].childNodes.length, 0, "Subview content item added even though there is no valid item to add");
     pva.dispose();
 
     let pvb = PanelView({
@@ -105,7 +105,8 @@ exports.testConstruction = function(assert) {
             }
         ]
     });
-    assert.equal(document.getElementById(pvb.id).getElementsByClassName("panel-subview-body")[0].childNodes.length,0, "Subview content item added even though there is no item with a supported type to add");
+   
+    assert.equal(document.getElementById(pvb.id).getElementsByClassName("panel-subview-body")[0].childNodes.length, 0, "Subview content item added even though there is no item with a supported type to add");
     pvb.dispose();
 };
 
@@ -157,7 +158,6 @@ exports.testShowEvent = function(assert, done) {
     });
     pv.show(button);
 };
-
 
 exports.testHideEvent = function(assert, done) {
     let pv = createPanelView("test-panelview-hideevent"),
