@@ -1,4 +1,3 @@
-
 var { PanelView } = require("./panelview");
 var { ActionButton } = require ("sdk/ui/button/action");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
