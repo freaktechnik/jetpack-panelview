@@ -8,6 +8,51 @@ Even though it could probably contain other things than just menu items, you can
 
 `panelview` exposes a similar API to `sdk/panel`, however it offers less functionality, due to the content restrictions.
 
+### Content Items ###
+When constructing a panelview you have to add content items. These may either be buttons or separators.
+```js
+var { PanelView } = require("panelview");
+
+let pv = PanelView({
+    id: 'demo-panelview',
+    title: 'Demo',
+    content: [
+        {
+            type: 'button',
+            label: 'First Action',
+            onClick: function(event) {
+                // action handler for the first action
+            }
+        },
+        {
+            type: 'button',
+            label: 'Second Action',
+            onClick: function(event) {
+                // handler for the second event
+            }
+        },
+        {
+            type: 'separator'
+        },
+        {
+            type: 'button',
+            label: 'Separated Button',
+            onClick: function(event) {
+                // another event handler
+            }
+        }
+    ],
+    footer: {
+        label: 'Footer Action',
+        onClick: function(event) {
+            // footer click handler
+        }
+    }
+});
+```
+
+For the usage of third party libraries together with the SDK, check out (this Toutorial)[https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox].
+
 ## Globals ##
 ### Constructors ###
 #### PanelView(options) ####
@@ -22,6 +67,8 @@ Required options:
 
      If you choose "button" as type, you need to supply a __label__ and __onClick__ attribute. You can optionally supply __disabled__,__icon__,__ActionType__ (to define the button type) and __accesskey__.
      A "separator" content item can optionally have a property __small__ set to true, to get a smaller separator when opened from the menu.
+
+     The onClick function gets the event details from the click on the button, so it can for example react to state changes for special button types.
 Optional options:
    * __footer__: An object containing a __label__ and __onClick__. The footer is displayed at the bottom and usually offers an action which opens new tabs or windows.
 
