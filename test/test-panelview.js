@@ -2,7 +2,10 @@ var { PanelView } = require("./panelview");
 var { ActionButton } = require ("sdk/ui/button/action");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 
-function createPanelView(testId, buttonTest) {
+//yes, I feel dirty for doing this.
+var buttonTest = "waiting";
+
+function createPanelView(testId) {
     return PanelView({
         id: testId,
         title: 'testView',
@@ -46,7 +49,6 @@ function createActionButton(buttonId) {
 
 exports.testConstruction = function(assert) {
     let testId = "test-panelview-construction";
-    let buttonTest = "waiting";
 
     let pv = createPanelView(testId, buttonTest);
     
