@@ -51,6 +51,9 @@ let pv = PanelView({
 });
 ```
 
+!(panelview spawned from a toolbarbutton)[panelview-panel.png]
+!(panelview inside the menu panel)[panelview-menu.png]
+
 Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed.
 
 For the usage of third party libraries together with the SDK, check out (this Toutorial)[https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox].

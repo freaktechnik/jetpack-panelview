@@ -46,7 +46,7 @@ function createActionButton(buttonId) {
     return ActionButton({
         id: buttonId,
         label: "Test button",
-        icon: "./test-icon.png"
+        icon: module.uri.replace(/[^\.\\\/]*\.js$/, "test-icon.png")
     });
 }
 
@@ -128,7 +128,7 @@ exports.testDestroy = function(assert) {
     assert.ok(!document.getElementById(pv.id), "Panelview wasn't removed properly");
 };
 
-exports.testShow = function(assert) {
+exports.testShow = function(assert, done) {
     let pv = createPanelView("test-panelview-show");
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
@@ -141,8 +141,10 @@ exports.testShow = function(assert) {
     assert.ok(!pv.isShowing(),"Panel didn't hide, test results invalid");
     // move button to menu panel
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
+    let window = getMostRecentBrowserWindow();
+    window.PanelUI.show();
     pv.show(button);
-    assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
+    assert.ok(pv.isShowing() && window.PanelUI.multiView.showingSubView, "Panelview did not open in the menu panel");
 
     button.destroy();
     pv.destroy();
