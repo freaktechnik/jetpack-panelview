@@ -51,6 +51,8 @@ let pv = PanelView({
 });
 ```
 
+Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed.
+
 For the usage of third party libraries together with the SDK, check out (this Toutorial)[https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox].
 
 ## Globals ##
@@ -75,7 +77,7 @@ Optional options:
 __onClick__ always automatically closes the panelview.
 ## PanelView ##
 ### Methods ###
-#### dispose() ####
+#### destroy() ####
 Destroys the panelview and its contents and removes it from the window's DOM.
 #### show(button) ####
 Opens the panelview from the supplied button. The __button__ should be an ActionButton or ToggleButton.

@@ -31,7 +31,7 @@ function createPanelView(testId) {
             }
         ],
         footer: {
-            title: 'footer',
+            label: 'footer',
             onClick: function() {
                 buttonTest = "footer";
             }
@@ -81,7 +81,7 @@ exports.testConstruction = function(assert) {
     subview.getElementsByClassName("panel-subview-footer")[0].doCommand();
     assert.equal(buttonTest, "footer", "Footer command is not executed properly");
 
-    pv.dispose();
+    pv.destroy();
 
     var pva, pvb;
     try {
@@ -116,12 +116,12 @@ exports.testConstruction = function(assert) {
     }
 };
 
-exports.testDispose = function(assert) {
+exports.testDestroy = function(assert) {
     let document = getMostRecentBrowserWindow().document;
-    assert.ok(!document.getElementById("test-panelview-dispose"), "There already is an element with the desired ID");
-    let pv = createPanelView("test-panelview-dispose");
+    assert.ok(!document.getElementById("test-panelview-destroy"), "There already is an element with the desired ID");
+    let pv = createPanelView("test-panelview-destroy");
     assert.ok(document.getElementById(pv.id), "Panelview wasn't created properly");
-    pv.dispose();
+    pv.destroy();
     assert.ok(!document.getElementById(pv.id), "Panelview wasn't removed properly");
 };
 
@@ -135,7 +135,7 @@ exports.testShow = function(assert) {
     assert.ok(pv.isShowing(), "Panelview did not open");    
 
     button.destroy();
-    pv.dispose();
+    pv.destroy();
 };
 
 exports.testHide = function(assert) {
@@ -147,7 +147,7 @@ exports.testHide = function(assert) {
     assert.ok(!pv.isShowing(), "Panelview hasn't been closed by hide");
     
     button.destroy();
-    pv.dispose();
+    pv.destroy();
 };
 
 exports.testShowEvent = function(assert, done) {
@@ -158,7 +158,7 @@ exports.testShowEvent = function(assert, done) {
         assert.pass("Panelview was successfully opened");
 
         button.destroy();
-        pv.dispose();
+        pv.destroy();
 
         done();
     });
@@ -173,7 +173,7 @@ exports.testHideEvent = function(assert, done) {
         assert.pass("Panelview was successfully closed");
 
         button.destroy();
-        pv.dispose();
+        pv.destroy();
 
         done();
     });
