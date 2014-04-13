@@ -151,7 +151,7 @@ exports.testDestroy = function(assert) {
     assert.ok(!document.getElementById("test-panelview-destroy"), "Panelview wasn't removed properly");
 };
 
-exports.testShow = function(assert, done) {
+exports.testShow = function(assert) {
     let pv = createPanelView("test-panelview-show");
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
@@ -191,8 +191,8 @@ exports.testShow = function(assert, done) {
     button.click(); // and this doesn't work either way.
     assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button (currently expected)");
 
-    //button.destroy();
-    //pv.destroy();
+    button.destroy();
+    pv.destroy();
 };
 
 exports.testHide = function(assert) {
