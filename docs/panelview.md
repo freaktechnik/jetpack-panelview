@@ -57,8 +57,13 @@ let pv = PanelView({
 ![panelview inside the menu panel](panelview-menu.png)
 
 ### Usage with SDK buttons ###
-Currently showing a subview inside the menu panel with the SDK buttons is broken.
-Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed.
+To use an SDK Action button or ToggleButton (recommended) together with a panelview you will have to apply a fix to the button, so the menu panel doesn't close when clicked on the button in the panel.
+You can easily apply the fix:
+```js
+    let button = ToggleButton({...});
+    require("panelview/workaround").applyButtonFix(button);
+```
+Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed, which is quite convenient.
 
 ## Globals ##
 ### Constructors ###
