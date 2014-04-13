@@ -72,14 +72,14 @@ Required options:
    * __title__: Title of the panelview, displayed on top when opened from the firefox menu.
    * __content__: Array of content items. Content items consist at least of a __type__ attribute, which is either "button" or "separator".
 
-     If you choose "button" as type, you need to supply a __label__ and __onClick__ attribute. You can optionally supply __disabled__,__icon__,__ActionType__ (to define the button type) and __accesskey__.
+     If you choose "button" as type, you need to supply a __label__ and __onClick__ attribute. You can optionally supply __disabled__,__icon__,__actionType__ (to define the button type) and __accesskey__.
      A "separator" content item can optionally have a property __small__ set to true, to get a smaller separator when opened from the menu.
 
      The onClick function gets the event details from the click on the button, so it can for example react to state changes for special button types.
 Optional options:
    * __footer__: An object containing a __label__ and __onClick__. The footer is displayed at the bottom and usually offers an action which opens new tabs or windows.
 
-__onClick__ always automatically closes the panelview.
+__onClick__ always automatically closes the panelview unless the actionType is "checkbox" or "radio".
 ## PanelView ##
 ### Methods ###
 #### destroy() ####

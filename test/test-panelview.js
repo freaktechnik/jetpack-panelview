@@ -133,7 +133,7 @@ exports.testDestroy = function(assert) {
     assert.ok(!document.getElementById("test-panelview-destroy"), "Panelview wasn't removed properly");
 };
 
-exports.testShow = function(assert) {
+exports.testShow = function(assert, done) {
     let pv = createPanelView("test-panelview-show");
     assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
@@ -150,6 +150,7 @@ exports.testShow = function(assert) {
     pv.hide();
     assert.ok(!pv.isShowing());
 
+    let window = getMostRecentBrowserWindow();
     button.on("click", function() {
         pv.show(button);
     });
