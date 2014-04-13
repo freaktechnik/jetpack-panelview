@@ -167,10 +167,10 @@ exports.testShow = function(assert) {
     pv.show(button);
     assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
     
-    pv.hide();
+    pv.hide(); // this destroys the menu panel
     assert.ok(!pv.isShowing());
-    button.click();
-    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button");
+    button.click(); // and this doesn't work either way.
+    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button (currently expected)");
 
     button.destroy();
     pv.destroy();
