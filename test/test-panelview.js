@@ -9,6 +9,7 @@ const { Cu } = require('chrome');
 const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
 const { getNodeView } = require("sdk/view/core");
 const { MainMenu } = require("./panelview/mainmenu");
+const { setTimeout } = require("sdk/timers");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -198,14 +199,18 @@ exports.testShowEvent = function(assert, done) {
     var pv = createPanelView("test-panelview-showevent"),
         button = createActionButton("test-panelview-showevent-button");
 
+    let window = getMostRecentBrowserWindow();
+    window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
+
     pv.once("show", function(event) {
-        // is showing is still false when this event is fired
-        assert.pass("Panelview was successfully opened");
-
-        button.destroy();
-        pv.destroy();
-
-        done();
+        setTimeout(function() {
+            assert.ok(pv.isShowing(),"Panelview was successfully opened");
+    
+            button.destroy();
+            pv.destroy();
+    
+            done();
+        }, 200);
     });
     pv.show(button);
 };
@@ -248,16 +253,20 @@ exports.testMenuHide = function(assert, done) {
         button = createActionButton("test-panelview-menuhide-button");
     moveButtonToMenu(button);
 
+    let window = getMostRecentBrowserWindow();
+    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
+
     pv.once("hide", function(event) {
-        // can't check isShowing, as it is probably still transitioning at the pont this event is fired
-        assert.pass("Panelview was successfully closed");
+        setTimeout(function() {
+            assert.ok(!pv.isShowing(), "Panelview was successfully closed");
+    
+            button.destroy();
+            pv.destroy();
+    
+            MainMenu.close();
 
-        button.destroy();
-        pv.destroy();
-
-        MainMenu.close();
-
-        done();
+            done();
+        }, 200);
     });
     pv.show(button);
     pv.hide();
