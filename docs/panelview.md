@@ -94,7 +94,7 @@ Opens the panelview from the supplied button. The __button__ should be an Action
 #### hide(closePanel) ####
 Hides the panelview if showing. If it is opened as separate panel the panel is closed. If it is opened as subview in the menu the menu goes back to the main view. If __closePanel__ is true, the panel displaying the panelview will always be closed, even if it's a MenuPanel.
 #### isShowing() ####
-Returns true if the panelview is currently either displayed as a standalone panel or in the menu panel. Consider this method unreliable.
+Returns true if the panelview is currently either displayed as a standalone panel or in the menu panel. Consider this method unreliable due to transitioning times.
 ### Properties ###
 #### id ####
 The ID of the PanelView
