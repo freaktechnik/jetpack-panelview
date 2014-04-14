@@ -2,12 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var { PanelView } = require("./panelview");
-var { ActionButton } = require ("sdk/ui/button/action");
+const { PanelView } = require("./panelview");
+const { ActionButton } = require ("sdk/ui");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 const { Cu } = require('chrome');
 const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
 const { getNodeView } = require("sdk/view/core");
+const { MainMenu } = require("./panelview/mainmenu");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -181,15 +182,15 @@ exports.testShow = function(assert) {
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
     assert.equal(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
     require("panelview/workaround").applyButtonFix(button);
-    let window = getMostRecentBrowserWindow();
-    window.PanelUI.show();
+    MainMenu.open();
     pv.show(button);
     assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
     
-    pv.hide(); // this destroys the menu panel
+    pv.hide();
     assert.ok(!pv.isShowing());
-    button.click(); // and this doesn't work either way.
-    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button (currently expected)");
+    button.click();
+    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button (test broken)");
+    MainMenu.close();
 
     button.destroy();
     pv.destroy();
