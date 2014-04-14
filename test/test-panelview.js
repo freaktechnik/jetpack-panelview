@@ -63,36 +63,85 @@ function moveButtonToMenu(button) {
     require("panelview/workaround").applyButtonFix(button);
 }
 
-exports.testConstruction = function(assert) {
-    let testId = "test-panelview-construction";
+exports.testContract = function(assert) {
+    //copied from test-ui-action-button
+    assert.throws(
+    () => PanelView({}),
+    /^The option/,
+    'throws on no option given');
 
-    let pv = createPanelView(testId);
-    
-    let document = getMostRecentBrowserWindow().document;
-    assert.ok(document.getElementById(testId),"Panel has not been added to the window");
-    assert.equal(testId, pv.id, "Id has not been set correctly");
-    let subview = document.getElementById(pv.id);
-    
-    assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
-    assert.equal(subview.getElementsByClassName("panel-subview-header")[0].getAttribute("value"), "testView", "Subview title isn't set properly");
+  // Test no title
+  assert.throws(
+    () => PanelView({ id: 'my-button', content: [ { type: 'button'} ] }),
+    /^The option "label"/,
+    'throws on no title given');
 
-    assert.ok(subview.getElementsByClassName("panel-subview-body")[0], "Panelview main content has not been created");
-    let content = subview.getElementsByClassName("panel-subview-body")[0];
-    assert.ok(content.getElementsByClassName("subviewbutton")[0], "Panelview main content does not have an action inside");
-    assert.equal(content.getElementsByClassName("subviewbutton")[0].getAttribute("label"), "an action", "Panelview main content first action does not have the correct label");
+  // Test no id
+  assert.throws(
+    () => PanelView({ title: 'my button', content: [ { type: 'button'} ] }),
+    /^The option "id"/,
+    'throws on no id given');
 
-    assert.ok(content.getElementsByTagName("toolbarseparator")[0], "Toolbar separator not created");
+  // Test no content
+  assert.throws(
+    () => PanelView({ id: 'my-button', title: 'my button' }),
+    /^The content item array/,
+    'throws on no content given');
 
-    assert.ok(content.getElementsByClassName("subviewbutton")[1], "Second button not created properly");
-    assert.equal(content.getElementsByClassName("subviewbutton")[1].getAttribute("type"), "checkbox");
 
-    assert.ok(subview.getElementsByClassName("panel-subview-footer")[0], "Subview footer not created properly");
-    assert.equal(subview.getElementsByClassName("panel-subview-footer")[0].getAttribute("label"), 'footer');
-    subview.getElementsByClassName("panel-subview-footer")[0].doCommand();
-    assert.equal(buttonTest, "footer", "Footer command is not executed properly");
-    assert.ok(!pv.isShowing(), "Panel not closed after command on footer button");
+  // Test empty title
+  assert.throws(
+    () => PanelView({ id: 'my-button', title: '', content: [ { type: 'button'} ] }),
+    /^The option "label"/,
+    'throws on no valid title given');
 
-    pv.destroy();
+  // Test invalid id
+  assert.throws(
+    () => PanelView({ id: 'my button', title: 'my button', content: [ { type: 'button'} ] }),
+    /^The option "id"/,
+    'throws on no valid id given');
+
+  // Test empty id
+  assert.throws(
+    () => PanelView({ id: '', title: 'my button', content: [ { type: 'button'} ] }),
+    /^The option "id"/,
+    'throws on no valid id given');
+
+  // Test invalid empty content array
+  assert.throws(
+    () => PanelView({ id: 'my-button', title: 'my button', content: [] }),
+    /^The content item array/,
+    'throws on no valid content given');
+
+  // Test unknown content type
+  assert.throws(
+    () => PanelView({ id: 'my-button', title: 'my button', content: [ { type: 'frame' } ] }),
+    /^The option "type"/,
+    'throws on no valid content type');
+
+  // Test only a separator
+  assert.throws(
+    () => PanelView({ id: 'my-panelview', title: 'my panelview', content: [ { type: 'separator' } ] }),
+    /^The content item array/,
+    'throws on only a separator as content');
+
+  // Test footer
+  assert.throws(
+    () => PanelView({ id: 'my-panelview', title: 'my panelview', content: [ { type: 'button' } ], footer: 'footer' }),
+    /^The footer/,
+    'throws on no footer object');
+
+  // Test footer without function
+  assert.throws(
+    () => PanelView({ id: 'my-panelview', title: 'my panelview', content: [ { type: 'button' } ], footer: { label: 'footer' } }),
+    /^The option "onClick"/,
+    'throws on no footer onClick function');
+
+  // Test footer without label
+  assert.throws(
+    () => PanelView({ id: 'my-panelview', title: 'my panelview', content: [ { type: 'button' } ], footer: { onClick: function() {} } }),
+    /^The option "label"/,
+    'throws on no footer label');
 
     var pva, pvb;
     try {
@@ -133,6 +182,38 @@ exports.testConstruction = function(assert) {
         if(pvb)
             pvb.destroy();
     }
+};
+
+exports.testConstruction = function(assert) {
+    let testId = "test-panelview-construction";
+
+    let pv = createPanelView(testId);
+    
+    let document = getMostRecentBrowserWindow().document;
+    assert.ok(document.getElementById(testId),"Panel has not been added to the window");
+    assert.equal(testId, pv.id, "Id has not been set correctly");
+    let subview = document.getElementById(pv.id);
+    
+    assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
+    assert.equal(subview.getElementsByClassName("panel-subview-header")[0].getAttribute("value"), "testView", "Subview title isn't set properly");
+
+    assert.ok(subview.getElementsByClassName("panel-subview-body")[0], "Panelview main content has not been created");
+    let content = subview.getElementsByClassName("panel-subview-body")[0];
+    assert.ok(content.getElementsByClassName("subviewbutton")[0], "Panelview main content does not have an action inside");
+    assert.equal(content.getElementsByClassName("subviewbutton")[0].getAttribute("label"), "an action", "Panelview main content first action does not have the correct label");
+
+    assert.ok(content.getElementsByTagName("toolbarseparator")[0], "Toolbar separator not created");
+
+    assert.ok(content.getElementsByClassName("subviewbutton")[1], "Second button not created properly");
+    assert.equal(content.getElementsByClassName("subviewbutton")[1].getAttribute("type"), "checkbox");
+
+    assert.ok(subview.getElementsByClassName("panel-subview-footer")[0], "Subview footer not created properly");
+    assert.equal(subview.getElementsByClassName("panel-subview-footer")[0].getAttribute("label"), 'footer');
+    subview.getElementsByClassName("panel-subview-footer")[0].doCommand();
+    assert.equal(buttonTest, "footer", "Footer command is not executed properly");
+    assert.ok(!pv.isShowing(), "Panel not closed after command on footer button");
+
+    pv.destroy();
 };
 /* disabled, since it never completes
 exports.testButtons = function(assert, done) {
@@ -259,7 +340,7 @@ exports.testMenuHide = function(assert, done) {
     pv.once("hide", function(event) {
         setTimeout(function() {
             assert.ok(!pv.isShowing(), "Panelview was successfully closed");
-    
+
             button.destroy();
             pv.destroy();
     
