@@ -55,10 +55,17 @@ function createActionButton(buttonId) {
     });
 }
 
+function moveButtonToMenu(button) {
+    // move button to menu panel
+    CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
+    if(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area != CustomizableUI.AREA_PANEL) throw "Button was not moved into the menu panel";
+    require("panelview/workaround").applyButtonFix(button);
+}
+
 exports.testConstruction = function(assert) {
     let testId = "test-panelview-construction";
 
-    let pv = createPanelView(testId, buttonTest);
+    let pv = createPanelView(testId);
     
     let document = getMostRecentBrowserWindow().document;
     assert.ok(document.getElementById(testId),"Panel has not been added to the window");
@@ -101,6 +108,10 @@ exports.testConstruction = function(assert) {
     catch(e) {
         assert.pass("Creating a view with an invalid content item throws an error");
     }
+    finally {
+        if(pva)
+            pva.destroy();
+    }
 
     try {
         pvb = PanelView({
@@ -117,31 +128,51 @@ exports.testConstruction = function(assert) {
     catch(e) {
         assert.pass("Creating a view with a content item with an unsuported type throws an error");
     }
+    finally {
+        if(pvb)
+            pvb.destroy();
+    }
 };
-
-exports.testButtons = function(assert) {
-    let pv = createPanelView("test-panelview-buttons"),
+/*
+exports.testButtons = function(assert, done) {
+    var pv = createPanelView("test-panelview-buttons"),
         button = createActionButton("test-panelview-buttons-button"),
         document = getMostRecentBrowserWindow().document,
-        content = document.getElementById(pv.id).getElementsByClassName("panel-subview-body")[0];
+        content = document.getElementById(pv.id).getElementsByClassName("panel-subview-body")[0],
+        testsDone = 0;
 
+    pv.once("show", function() {
+        assert.ok(pv.isShowing());
+        pv.once("hide", function() {
+            assert.equal(buttonTest, "successful", "Action click handler not working properly");
+            assert.pass("Panel closed after command on regular content button");
+
+            pv.once("show", function() {
+                assert.ok(pv.isShowing());
+                buttonTest = "click test";
+                pv.once("hide", function() {
+                    assert.fail("Panel closed after command on checkbox item");
+                    allDone();
+                });
+                content.getElementsByClassName("subviewbutton")[1].doCommand();
+
+                assert.equal(buttonTest, "click test", "Command triggers command functions of other buttons");
+                assert.ok(pv.isShowing(), "Panel closed after command on checkbox item");
+                allDone();
+            });
+            pv.show(button);
+        });
+        content.getElementsByClassName("subviewbutton")[0].doCommand();
+    });
     pv.show(button);
-    assert.ok(pv.isShowing());
-    content.getElementsByClassName("subviewbutton")[0].doCommand();
-    assert.equal(buttonTest, "successful", "Action click handler not working properly");
-    assert.ok(!pv.isShowing(), "Panel not closed after command on regular content button");
 
-    pv.show(button);
-    assert.ok(pv.isShowing());
-    buttonTest = "click test";
-    content.getElementsByClassName("subviewbutton")[1].doCommand();
-    assert.equal(buttonTest, "click test", "Command triggers command functions of other buttons");
-    assert.ok(pv.isShowing(), "Panel closed after command on checkbox item");
-
-    pv.destroy();
-    button.destroy();
+    function allDone() {
+        pv.destroy();
+        button.destroy();
+        done();
+    }
 };
-
+*/
 exports.testDestroy = function(assert) {
     let document = getMostRecentBrowserWindow().document;
     assert.ok(!document.getElementById("test-panelview-destroy"), "There already is an element with the desired ID");
@@ -162,58 +193,15 @@ exports.testShow = function(assert) {
         pv.show({});
     } ,/A subview can only be displayed with a button as anchor/, "Show didn't throw even though it didn't get the required arguments");
 
-    let button = createActionButton("test-panelview-show-button")
-    pv.show(button);
-    assert.ok(pv.isShowing(), "Panelview did not open");
-
-    pv.hide();
-    assert.ok(!pv.isShowing());
-
-    let window = getMostRecentBrowserWindow();
-    button.on("click", function() {
-        pv.show(button);
-    });
-    button.click();
-    assert.ok(pv.isShowing(), "Panelview did not open after simualting a click on the button");
-
-    pv.hide();
-    assert.ok(!pv.isShowing());
-    // move button to menu panel
-    CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
-    assert.equal(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
-    require("panelview/workaround").applyButtonFix(button);
-    MainMenu.open();
-    pv.show(button);
-    assert.ok(pv.isShowing(), "Panelview did not open in the menu panel");
-    
-    pv.hide();
-    assert.ok(!pv.isShowing());
-    button.click();
-    assert.ok(pv.isShowing(), "Panelview wasn't opened properly in the menu panel by simulating a click on the button (test broken)");
-    MainMenu.close();
-
-    button.destroy();
-    pv.destroy();
-};
-
-exports.testHide = function(assert) {
-    let pv = createPanelView("test-panelview-hide"),
-        button = createActionButton("test-panelview-hide-button");
-    pv.show(button);
-    assert.ok(pv.isShowing(), "Panelview hasn't been opened to run this test properly");
-    pv.hide();
-    assert.ok(!pv.isShowing(), "Panelview hasn't been closed by hide");
-    
-    button.destroy();
     pv.destroy();
 };
 
 exports.testShowEvent = function(assert, done) {
-    let pv = createPanelView("test-panelview-showevent"),
+    var pv = createPanelView("test-panelview-showevent"),
         button = createActionButton("test-panelview-showevent-button");
 
-    pv.on("show", function(event) {
-        assert.pass("Panelview was successfully opened");
+    pv.once("show", function(event) {
+        assert.ok(pv.isShowing(),"Panelview was successfully opened");
 
         button.destroy();
         pv.destroy();
@@ -223,15 +211,51 @@ exports.testShowEvent = function(assert, done) {
     pv.show(button);
 };
 
-exports.testHideEvent = function(assert, done) {
-    let pv = createPanelView("test-panelview-hideevent"),
-        button = createActionButton("test-panelview-hideevent-button");
+exports.testMenuShow = function(assert, done) {
+    var pv = createPanelView("test-panelview-menushow"),
+        button = createActionButton("test-panelview-menushow-button");
+    moveButtonToMenu(button);
 
-    pv.on("hide", function(event) {
-        assert.pass("Panelview was successfully closed");
+    pv.once("show", function(event) {
+        assert.ok(pv.isShowing(),"Panelview was successfully opened");
 
         button.destroy();
         pv.destroy();
+        MainMenu.close();
+
+        done();
+    });
+    pv.show(button);
+};
+
+exports.testHideEvent = function(assert, done) {
+    var pv = createPanelView("test-panelview-hideevent"),
+        button = createActionButton("test-panelview-hideevent-button");
+
+    pv.once("hide", function(event) {
+        assert.ok(!pv.isShowing(),"Panelview was successfully closed");
+
+        button.destroy();
+        pv.destroy();
+
+        done();
+    });
+    pv.show(button);
+    pv.hide();
+};
+
+exports.testMenuHide = function(assert, done) {
+    var pv = createPanelView("test-panelview-menuhide"),
+        button = createActionButton("test-panelview-menuhide-button");
+    moveButtonToMenu(button);
+
+    pv.once("hide", function(event) {
+        assert.ok(!pv.isShowing(),"Panelview was successfully closed");
+
+        button.destroy();
+        pv.destroy();
+
+        MainMenu.close();
 
         done();
     });
