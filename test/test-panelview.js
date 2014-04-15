@@ -202,7 +202,7 @@ exports.testConstruction = function(assert) {
     assert.ok(content.getElementsByClassName("subviewbutton")[0], "Panelview main content does not have an action inside");
     assert.equal(content.getElementsByClassName("subviewbutton")[0].getAttribute("label"), "an action", "Panelview main content first action does not have the correct label");
 
-    assert.ok(content.getElementsByTagName("toolbarseparator")[0], "Toolbar separator not created");
+    assert.ok(content.getElementsByTagName("menuseparator")[0], "Toolbar separator not created");
 
     assert.ok(content.getElementsByClassName("subviewbutton")[1], "Second button not created properly");
     assert.equal(content.getElementsByClassName("subviewbutton")[1].getAttribute("type"), "checkbox");
