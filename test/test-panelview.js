@@ -325,16 +325,15 @@ exports.testMenuShow = function(assert, done) {
     var pv = createPanelView("test-panelview-menushow"),
         button = createActionButton("test-panelview-menushow-button");
     moveButtonToMenu(button);
-    button.on("click", () => pv.show(button));
 
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-        //pv.destroy();
-        //button.destroy();
-        //MainMenu.close();
+        pv.destroy();
+        button.destroy();
+        MainMenu.close();
 
-        //done();
+        done();
     });
     pv.show(button);
 };
