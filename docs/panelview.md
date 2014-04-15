@@ -82,6 +82,8 @@ Required options:
      The onClick function gets the event details from the click on the button, so it can for example react to state changes for special button types.
 Optional options:
    * __footer__: An object containing a __label__ and __onClick__. The footer is displayed at the bottom and usually offers an action which opens new tabs or windows.
+   * __onShow__: Event listener for the show event.
+   * __onHide__: Event listener for the hide event.
 
 __onClick__ always automatically closes the panelview unless the actionType is "checkbox" or "radio".
 ## PanelView ##
@@ -92,11 +94,11 @@ Destroys the panelview and its contents and removes it from the window's DOM.
 Opens the panelview from the supplied button. The __button__ should be an ActionButton or ToggleButton.
 #### hide(closePanel) ####
 Hides the panelview if showing. If it is opened as separate panel the panel is closed. If it is opened as subview in the menu the menu goes back to the main view. If __closePanel__ is true, the panel displaying the panelview will always be closed, even if it's a MenuPanel.
-#### isShowing() ####
-Returns true if the panelview is currently either displayed as a standalone panel or in the menu panel. Consider this method unreliable due to transitioning times.
 ### Properties ###
 #### id ####
 The ID of the PanelView
+#### isShowing ####
+Returns true if the panelview is currently either displayed as a standalone panel or in the menu panel. Consider this method unreliable due to transitioning times.
 ### Events ###
 #### show ####
 This event is emitted whenever the panelview gets displayed.
