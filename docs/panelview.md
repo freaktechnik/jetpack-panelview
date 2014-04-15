@@ -91,9 +91,38 @@ __onClick__ always automatically closes the panelview unless the actionType is "
 #### destroy() ####
 Destroys the panelview and its contents and removes it from the window's DOM.
 #### show(button) ####
-Opens the panelview from the supplied button. The __button__ should be an ActionButton or ToggleButton.
+Opens the panelview from the supplied button.
+##### Parameters #####
+###### button: ToggleButton or ActionButton ######
+Button the Panelview is anchored on.
 #### hide(closePanel) ####
-Hides the panelview if showing. If it is opened as separate panel the panel is closed. If it is opened as subview in the menu the menu goes back to the main view. If __closePanel__ is true, the panel displaying the panelview will always be closed, even if it's a MenuPanel.
+Hides the panelview if showing. If it is opened as separate panel the panel is closed. If it is opened as subview in the menu the menu goes back to the main view.
+##### Parameters #####
+###### closePanel: boolean ######
+Optionally forces the panel to be closed, even if the view is displayed as subview. Defaults to false.
+#### on(type, listener) ####
+Register an event listener.
+##### Parameters #####
+###### type: String ######
+The event type.
+###### listener: function ######
+the event listener.
+#### once(type, listener) ####
+Register an event listener which only listens for the event once.
+##### Parameters #####
+###### type: String ######
+The event type.
+###### listener: function ######
+the event listener.
+#### removeListener(type, listener) ####
+Remove an event listener.
+##### Parameters #####
+###### type: String ######
+The event type.
+###### listener: function ######
+the event listener.
+#### off(type, listener) ####
+Same as `removeListener`.
 ### Properties ###
 #### id ####
 The ID of the PanelView
