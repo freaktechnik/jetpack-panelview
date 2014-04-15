@@ -211,7 +211,7 @@ exports.testConstruction = function(assert) {
     assert.equal(subview.getElementsByClassName("panel-subview-footer")[0].getAttribute("label"), 'footer');
     subview.getElementsByClassName("panel-subview-footer")[0].doCommand();
     assert.equal(buttonTest, "footer", "Footer command is not executed properly");
-    assert.ok(!pv.isShowing(), "Panel not closed after command on footer button");
+    assert.ok(!pv.isShowing, "Panel not closed after command on footer button");
 
     pv.destroy();
 };
@@ -237,7 +237,7 @@ exports.testButtons = function(assert, done) {
                 content.getElementsByClassName("subviewbutton")[1].doCommand();
 
                 assert.equal(buttonTest, "click test", "Command triggers command functions of other buttons");
-                assert.ok(pv.isShowing(), "Panel closed after command on checkbox item");
+                assert.ok(pv.isShowing, "Panel closed after command on checkbox item");
                 allDone();
             });
             pv.show(button);
@@ -265,9 +265,9 @@ exports.testDestroy = function(assert) {
 
 exports.testShow = function(assert) {
     let pv = createPanelView("test-panelview-show");
-    assert.ok(!pv.isShowing(), "Panelview is already displaying even though never prompted to open");
+    assert.ok(!pv.isShowing, "Panelview is already displaying even though never prompted to open");
     assert.throws(pv.show,/A subview can only be displayed with a button as anchor/,"Show didn't throw even though it didn't get the required arguments");
-    assert.ok(!pv.isShowing(), "Panelview is opened even though no anchor was passed");
+    assert.ok(!pv.isShowing, "Panelview is opened even though no anchor was passed");
 
     assert.throws(function() {
         pv.show({});
@@ -285,14 +285,39 @@ exports.testShowEvent = function(assert, done) {
 
     pv.once("show", function(event) {
         setTimeout(function() {
-            assert.ok(pv.isShowing(),"Panelview was successfully opened");
+            assert.ok(pv.isShowing,"Panelview was successfully opened");
     
-            button.destroy();
             pv.destroy();
+            button.destroy();
     
             done();
         }, 200);
     });
+    pv.show(button);
+};
+
+exports.testShowProperty = function(assert, done) {
+    var pv = PanelView({
+            id: "test-panelview-showproperty",
+            title: "Test Panel",
+            content: [
+                {
+                    type: "button",
+                    label: "button"
+                }
+            ],
+            onShow: function(event) {
+                setTimeout(function() {
+                    assert.ok(pv.isShowing,"Panelview was successfully opened");
+
+                    pv.destroy();
+                    button.destroy();
+
+                    done();
+                }, 200);
+            }
+        }),
+        button = createActionButton("test-panelview-showproperty-button");
     pv.show(button);
 };
 
@@ -302,10 +327,10 @@ exports.testMenuShow = function(assert, done) {
     moveButtonToMenu(button);
 
     pv.once("show", function(event) {
-        assert.ok(pv.isShowing(),"Panelview was successfully opened");
+        assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-        button.destroy();
         pv.destroy();
+        button.destroy();
         MainMenu.close();
 
         done();
@@ -318,13 +343,37 @@ exports.testHideEvent = function(assert, done) {
         button = createActionButton("test-panelview-hideevent-button");
 
     pv.once("hide", function(event) {
-        assert.ok(!pv.isShowing(),"Panelview was successfully closed");
+        assert.ok(!pv.isShowing,"Panelview was successfully closed");
 
-        button.destroy();
         pv.destroy();
+        button.destroy();
 
         done();
     });
+    pv.show(button);
+    pv.hide();
+};
+
+exports.testHideProperty = function(assert, done) {
+    var pv = PanelView({
+            id: "test-panelview-hideproperty",
+            title: "Test Panel",
+            content: [
+                {
+                    type: "button",
+                    label: "button"
+                }
+            ],
+            onHide: function(event) {
+                assert.ok(!pv.isShowing,"Panelview was successfully closed");
+
+                pv.destroy();
+                button.destroy();
+
+                done();
+            }
+        }),
+        button = createActionButton("test-panelview-hideproperty-button");
     pv.show(button);
     pv.hide();
 };
@@ -339,10 +388,10 @@ exports.testMenuHide = function(assert, done) {
 
     pv.once("hide", function(event) {
         setTimeout(function() {
-            assert.ok(!pv.isShowing(), "Panelview was successfully closed");
+            assert.ok(!pv.isShowing, "Panelview was successfully closed");
 
-            button.destroy();
             pv.destroy();
+            button.destroy();
     
             MainMenu.close();
 
@@ -351,6 +400,28 @@ exports.testMenuHide = function(assert, done) {
     });
     pv.show(button);
     pv.hide();
+};
+
+exports.testForcedMenuHide = function(assert, done) {
+    var pv = createPanelView("test-panelview-forcedmenuhide"),
+        button = createActionButton("test-panelview-forcedmenuhide-button");
+    moveButtonToMenu(button);
+
+    let window = getMostRecentBrowserWindow();
+    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
+
+    pv.once("hide", function(event) {
+        setTimeout(function() {
+            assert.ok(!pv.isShowing && !MainMenu.isOpen(), "Panelview was successfully closed");
+
+            pv.destroy();
+            button.destroy();
+
+            done();
+        }, 200);
+    });
+    pv.show(button);
+    pv.hide(true);
 };
 
 require('sdk/test').run(exports);
