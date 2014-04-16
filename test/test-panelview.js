@@ -10,6 +10,8 @@ const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {
 const { getNodeView } = require("sdk/view/core");
 const { MainMenu } = require("./panelview/mainmenu");
 const { setTimeout } = require("sdk/timers");
+const { browserWindows } = require("sdk/windows");
+const workaround = require("panelview/workaround");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -58,7 +60,7 @@ function createActionButton(buttonId) {
 
 function moveButtonToMenu(button) {
     // move button to menu panel
-    require("panelview/workaround").applyButtonFix(button);
+    workaround.applyButtonFix(button);
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
 }
 
@@ -328,6 +330,7 @@ exports.testMenuShow = function(assert, done) {
                 pv.show(button);
             }
         };
+
     
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
@@ -341,9 +344,32 @@ exports.testMenuShow = function(assert, done) {
     });
 
     CustomizableUI.addListener(listener);
-
+    
     moveButtonToMenu(button);
 };
+
+exports.testShowInOtherWindow = function(assert, done) {
+    var pv = createPanelView("test-panelview-menushow"),
+        button = createActionButton("test-panelview-menushow-button");
+
+    moveButtonToMenu(button);
+    
+    pv.once("show", function(event) {
+        assert.ok(pv.isShowing,"Panelview was successfully opened");
+
+        pv.destroy();
+        button.destroy();
+        MainMenu.close();
+        newWindow.close();
+
+        done();
+    });
+    
+    browserWindows.on("open", () => setTimeout(() => pv.show(button), 9000));
+
+    var newWindow = browserWindows.open("about:home");
+};
+
 
 exports.testHideEvent = function(assert, done) {
     var pv = createPanelView("test-panelview-hideevent"),

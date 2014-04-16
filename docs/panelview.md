@@ -63,6 +63,8 @@ You can easily apply the fix:
     let button = ToggleButton({...});
     require("panelview/workaround").applyButtonFix(button);
 ```
+This fix currently doesn't work correctly with windows opened after the function is called, even though the code for it is in place.
+
 Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed, which is quite convenient.
 
 ## Globals ##
