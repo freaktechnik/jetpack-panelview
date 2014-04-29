@@ -81,7 +81,9 @@ Required options:
 
      If you choose "button" as type, you need to supply a __label__ and __onClick__ attribute. You can optionally supply __disabled__,__icon__,__actionType__ (to define the button type) and __accesskey__.
 
-     The onClick function gets the event details from the click on the button, so it can for example react to state changes for special button types.
+     The __icon__ property can take local URIs with ./ in the beginning, data URLs and also mulit-size arrays for hiDPI icons like the SDK buttons do. The standard size is 16px, while hiDPI would be 32px.
+
+     The __onClick__ function gets the event details from the click on the button, so it can for example react to state changes for special button types.
 Optional options:
    * __footer__: An object containing a __label__ and __onClick__. The footer is displayed at the bottom and usually offers an action which opens new tabs or windows.
    * __onShow__: Event listener for the show event.
