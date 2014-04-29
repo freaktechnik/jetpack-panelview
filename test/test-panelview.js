@@ -273,6 +273,7 @@ exports.testShow = function(assert) {
     assert.throws(function() {
         pv.show({});
     } ,/A subview can only be displayed with a button as anchor/, "Show didn't throw even though it didn't get the required arguments");
+    assert.ok(!pv.isShowing, "Panelview is oepened even though it didn't get the required arguments");
 
     pv.destroy();
 };
@@ -284,10 +285,14 @@ exports.testShowEvent = function(assert, done) {
     let window = getMostRecentBrowserWindow();
     window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
 
+    workaround.applyButtonFix(button);
+    button.on("click",() => pv.show(button));
+
     pv.once("show", function(event) {
         setTimeout(function() {
             assert.ok(pv.isShowing,"Panelview was successfully opened");
-    
+
+            pv.hide();
             pv.destroy();
             button.destroy();
     
@@ -311,6 +316,7 @@ exports.testShowProperty = function(assert, done) {
                 setTimeout(function() {
                     assert.ok(pv.isShowing,"Panelview was successfully opened");
 
+                    pv.hide();
                     pv.destroy();
                     button.destroy();
 
@@ -335,10 +341,11 @@ exports.testMenuShow = function(assert, done) {
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
 
+        pv.hide();
         CustomizableUI.removeListener(listener);
         pv.destroy();
         button.destroy();
-        MainMenu.close();
+        setTimeout(() => MainMenu.close(), 100);
 
         done();
     });
@@ -357,6 +364,7 @@ exports.testShowInOtherWindow = function(assert, done) {
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
 
+        pv.hide();
         pv.destroy();
         button.destroy();
         MainMenu.close();
@@ -479,4 +487,3 @@ exports.testForcedMenuHide = function(assert, done) {
 };
 
 require('sdk/test').run(exports);
-
