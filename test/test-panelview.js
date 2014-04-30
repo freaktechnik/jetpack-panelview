@@ -9,7 +9,7 @@ const { Cu } = require('chrome');
 const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
 const { getNodeView } = require("sdk/view/core");
 const { MainMenu } = require("./panelview/mainmenu");
-const { setTimeout } = require("sdk/timers");
+const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("panelview/workaround");
 
@@ -222,38 +222,81 @@ exports.testButtons = function(assert, done) {
         button = createActionButton("test-panelview-buttons-button"),
         document = getMostRecentBrowserWindow().document,
         content = document.getElementById(pv.id).getElementsByClassName("panel-subview-body")[0],
-        testsDone = 0;
+        buttonNo = 0,
+        buttonTestVal = buttonTest,
+        buttons = content.getElementsByClassName("subviewbutton"),
+        shouldHide = true,
+        next = false,
+        timer;
 
-    pv.once("show", function() {
-        pv.once("hide", function() {
-            assert.equal(buttonTest, "successful", "Action click handler not working properly");
-            assert.pass("Panel closed after command on regular content button");
+    pv.on("show", show);
+    pv.on("hide", hide);
 
-            pv.once("show", function() {
-                buttonTest = "click test";
-                pv.once("hide", function() {
-                    assert.fail("Panel closed after command on checkbox item");
-                    allDone();
-                });
-                content.getElementsByClassName("subviewbutton")[1].doCommand();
-
-                assert.equal(buttonTest, "click test", "Command triggers command functions of other buttons");
-                assert.ok(pv.isShowing, "Panel closed after command on checkbox item");
-                allDone();
-            });
-            pv.show(button);
-        });
-        content.getElementsByClassName("subviewbutton")[0].doCommand();
-    });
     pv.show(button);
 
+    function hide() {
+        if(!next) {
+            next = true;
+            assert.equal(buttonTest, buttonTestVal, "Action click handler not working properly");
+            if(shouldHide)
+                assert.pass("Panel closed after command on regular content button");
+            else {
+                assert.fail("Panel closed after command on checkbox item");
+                removeTimeout(timer);
+            }
+    
+            if(++buttonNo == buttons.length)
+                allDone();
+            else
+                pv.show(button);
+        }
+        else
+            pv.show(button);
+    }
+    function show() {
+        next = false;
+        if(buttons[buttonNo].type == "checkbox") {
+            shouldHide = false;
+            buttonTest = "nothing";
+            buttonTestVal = "nothing";
+        }
+        else {
+            buttonTestVal = "successful";
+            shouldHide = true;
+        }
+
+        if(!shouldHide) {
+            timer = setTimeout(hideCheck, 200);
+        }
+
+        buttons[buttonNo].click();
+    }
+    function hideCheck() {
+        if(!next) {
+            next = true;
+            assert.equal(buttonTest, buttonTestVal, "Action click handler not working properly");
+            if(!shouldHide)
+                assert.pass("Panel didn't close after clicking on checkbox item");
+            else
+                assert.fail("Panel didn't hide");
+            
+            if(++buttonNo == buttons.length)
+                allDone();
+            else {
+                pv.hide();
+            }
+        }
+    }
+
     function allDone() {
+        pv.off("show", show);
+        pv.off("hide", hide);
         pv.destroy();
         button.destroy();
         done();
     }
-};
-*/
+};*/
+
 exports.testDestroy = function(assert) {
     let document = getMostRecentBrowserWindow().document;
     assert.ok(!document.getElementById("test-panelview-destroy"), "There already is an element with the desired ID");
@@ -284,9 +327,6 @@ exports.testShowEvent = function(assert, done) {
 
     let window = getMostRecentBrowserWindow();
     window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
-
-    workaround.applyButtonFix(button);
-    button.on("click",() => pv.show(button));
 
     pv.once("show", function(event) {
         setTimeout(function() {
