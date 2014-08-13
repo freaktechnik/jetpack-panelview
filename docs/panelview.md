@@ -16,41 +16,41 @@ When constructing a panelview you have to add content items. These may either be
 var { PanelView } = require("panelview");
 
 let pv = PanelView({
-    id: 'demo-panelview',
-    title: 'Demo',
-    content: [
-        {
-            type: 'button',
-            label: 'First Action',
-            onClick: function(event) {
-                // action handler for the first action
+        id: 'demo-panelview',
+        title: 'Demo',
+        content: [
+            {
+                type: 'button',
+                label: 'First Action',
+                onClick: function(event) {
+                    // action handler for the first action
+                }
+            },
+            {
+                type: 'button',
+                label: 'Second Action',
+                onClick: function(event) {
+                    // handler for the second event
+                }
+            },
+            {
+                type: 'separator'
+            },
+            {
+                type: 'button',
+                label: 'Separated Button',
+                onClick: function(event) {
+                    // another event handler
+                }
             }
-        },
-        {
-            type: 'button',
-            label: 'Second Action',
+        ],
+        footer: {
+            label: 'Footer Action',
             onClick: function(event) {
-                // handler for the second event
-            }
-        },
-        {
-            type: 'separator'
-        },
-        {
-            type: 'button',
-            label: 'Separated Button',
-            onClick: function(event) {
-                // another event handler
+                // footer click handler
             }
         }
-    ],
-    footer: {
-        label: 'Footer Action',
-        onClick: function(event) {
-            // footer click handler
-        }
-    }
-});
+    });
 ```
 
 ![panelview spawned from a toolbarbutton](panelview-panel.png)
@@ -59,13 +59,15 @@ let pv = PanelView({
 ### Attaching your PanelView to a button ###
 In order to show the PanelView you need to call its show method, as shown in this example:
 ```js
-    let viewPanel = PanelView({...}),
-        {ActionButton} = require('sdk/ui'),
-        openWidget = ActionButton({
+    let pv = PanelView({...}),
+        { ToggleButton } = require('sdk/ui'),
+        button = ToggleButton({
             id: 'open-panelview',
             label: 'Open my PanelView',
             onClick: function(state){
-                viewPanel.show(openWidget);
+                if(state.checked) {
+                    viewPanel.show(button);
+                }
             }
         });
 ```
