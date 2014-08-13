@@ -56,7 +56,21 @@ let pv = PanelView({
 ![panelview spawned from a toolbarbutton](panelview-panel.png)
 ![panelview inside the menu panel](panelview-menu.png)
 
-### Usage with SDK buttons ###
+### Attaching your PanelView to a button ###
+In order to show the PanelView you need to call its show method, as shown in this example:
+```js
+    let viewPanel = PanelView({...}),
+        {ActionButton} = require('sdk/ui'),
+        openWidget = ActionButton({
+            id: 'open-panelview',
+            label: 'Open my PanelView',
+            onClick: function(state){
+                viewPanel.show(openWidget);
+            }
+        });
+```
+
+#### Fixing SDK buttons in the Menu Panel ####
 To use an SDK Action button or ToggleButton (recommended) together with a panelview you will have to apply a fix to the button, so the menu panel doesn't close when clicked on the button in the panel.
 You can easily apply the fix:
 ```js
@@ -66,20 +80,6 @@ You can easily apply the fix:
 This fix currently doesn't work correctly with windows opened after the function is called, even though the code for it is in place.
 
 Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed, which is quite convenient.
-
-### Attaching your PanelView to a button ###
-In order to show the PanelView you need to call its show method, as shown in this example:
-```js
-    let viewPanel = PanelView({...});
-    let {ActionButton} = require('sdk/ui');
-    openWidget = ActionButton({
-        id: 'open-panelview',
-        label: 'Open my PanelView',
-        onClick: function(state){
-            viewPanel.show(openWidget);
-        }
-    });
-```
 
 ## Globals ##
 ### Constructors ###
