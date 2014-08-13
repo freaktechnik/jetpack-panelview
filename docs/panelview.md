@@ -67,6 +67,20 @@ This fix currently doesn't work correctly with windows opened after the function
 
 Using a panelview on a ToggleButton will sometimes uncheck it when the panelview is closed, which is quite convenient.
 
+### Attaching your PanelView to a button ###
+In order to show the PanelView you need to call its show method, as shown in this example:
+```js
+    let viewPanel = PanelView({...});
+    let {ActionButton} = require('sdk/ui');
+    openWidget = ActionButton({
+        id: 'open-panelview',
+        label: 'Open my PanelView',
+        onClick: function(state){
+            viewPanel.show(openWidget);
+        }
+    });
+```
+
 ## Globals ##
 ### Constructors ###
 #### PanelView(options) ####
