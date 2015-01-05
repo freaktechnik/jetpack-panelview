@@ -1,7 +1,8 @@
 {
-    "nane": "panelview",
+    "name": "panelview",
     "description": "Create subview panels introduced in Australis",
     "author": "freaktechnik",
-    "version": "0.1",
+    "version": "0.1.1",
+    "main": "lib/panelview.js",
     "license": "MPL 2.0 (http://mozilla.org/MPL/2.0/)"
 }
