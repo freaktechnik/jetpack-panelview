@@ -2,16 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { PanelView } = require("./panelview");
+const { PanelView } = require("../lib/panelview");
 const { ActionButton } = require ("sdk/ui");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 const { Cu } = require('chrome');
 const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
 const { getNodeView } = require("sdk/view/core");
-const { MainMenu } = require("./panelview/mainmenu");
+const { MainMenu } = require("../lib/panelview/mainmenu");
 const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
-const workaround = require("panelview/workaround");
+const workaround = require("../lib/panelview/workaround");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -189,12 +189,12 @@ exports.testConstruction = function(assert) {
     let testId = "test-panelview-construction";
 
     let pv = createPanelView(testId);
-    
+
     let document = getMostRecentBrowserWindow().document;
     assert.ok(document.getElementById(testId),"Panel has not been added to the window");
     assert.equal(testId, pv.id, "Id has not been set correctly");
     let subview = document.getElementById(pv.id);
-    
+
     assert.ok(subview.getElementsByClassName("panel-subview-header")[0], "Panelview header has not been created");
     assert.equal(subview.getElementsByClassName("panel-subview-header")[0].getAttribute("value"), "testView", "Subview title isn't set properly");
 
@@ -244,7 +244,7 @@ exports.testButtons = function(assert, done) {
                 assert.fail("Panel closed after command on checkbox item");
                 removeTimeout(timer);
             }
-    
+
             if(++buttonNo == buttons.length)
                 allDone();
             else
@@ -279,7 +279,7 @@ exports.testButtons = function(assert, done) {
                 assert.pass("Panel didn't close after clicking on checkbox item");
             else
                 assert.fail("Panel didn't hide");
-            
+
             if(++buttonNo == buttons.length)
                 allDone();
             else {
@@ -335,7 +335,7 @@ exports.testShowEvent = function(assert, done) {
             pv.hide();
             pv.destroy();
             button.destroy();
-    
+
             done();
         }, 200);
     });
@@ -377,7 +377,7 @@ exports.testMenuShow = function(assert, done) {
             }
         };
 
-    
+
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
 
@@ -391,16 +391,20 @@ exports.testMenuShow = function(assert, done) {
     });
 
     CustomizableUI.addListener(listener);
-    
+
     moveButtonToMenu(button);
 };
 
 exports.testShowInOtherWindow = function(assert, done) {
-    var pv = createPanelView("test-panelview-menushow"),
-        button = createActionButton("test-panelview-menushow-button");
+    var pv = createPanelView("test-panelview-menushow");
+    assert.pass("created panel view");
+
+    var button = createActionButton("test-panelview-menushow-button");
+    assert.pass("created the action button");
 
     moveButtonToMenu(button);
-    
+    assert.pass("moved the action button");
+
     pv.once("show", function(event) {
         assert.ok(pv.isShowing,"Panelview was successfully opened");
 
@@ -412,8 +416,8 @@ exports.testShowInOtherWindow = function(assert, done) {
 
         done();
     });
-    
-    browserWindows.on("open", () => setTimeout(() => pv.show(button), 9000));
+
+    browserWindows.on("open", () => setTimeout(() => pv.show(button), 1000));
 
     var newWindow = browserWindows.open("about:home");
 };
@@ -482,7 +486,7 @@ exports.testMenuHide = function(assert, done) {
             CustomizableUI.removeListener(listener);
             pv.destroy();
             button.destroy();
-    
+
             MainMenu.close();
 
             done();
@@ -503,7 +507,7 @@ exports.testForcedMenuHide = function(assert, done) {
         };
 
     let window = getMostRecentBrowserWindow();
-    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning"); 
+    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
     CustomizableUI.addListener(listener);
 
@@ -523,7 +527,7 @@ exports.testForcedMenuHide = function(assert, done) {
         }, 200);
     });
 
-    moveButtonToMenu(button);  
+    moveButtonToMenu(button);
 };
 
 require('sdk/test').run(exports);
