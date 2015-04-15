@@ -12,6 +12,8 @@ const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
 
+const TIMEOUT = require("sdk/system").env.TRAVIS == "true" ? 2000 : 200;
+
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
 
@@ -336,7 +338,7 @@ exports.testShowEvent = function(assert, done) {
             button.destroy();
 
             done();
-        }, 2000);
+        }, TIMEOUT);
     });
     pv.show(button);
 };
@@ -360,7 +362,7 @@ exports.testShowProperty = function(assert, done) {
                     button.destroy();
 
                     done();
-                }, 200);
+                }, TIMEOUT);
             }
         }),
         button = createActionButton("test-panelview-showproperty-button");
@@ -471,7 +473,7 @@ exports.testMenuHide = function(assert, done) {
     window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
     pv.once("show", function() {
-        setTimeout(() => pv.hide(), 200);
+        setTimeout(() => pv.hide(), TIMEOUT);
     });
 
      pv.once("hide", function(event) {
@@ -485,7 +487,7 @@ exports.testMenuHide = function(assert, done) {
             MainMenu.close();
 
             done();
-        }, 200);
+        }, TIMEOUT);
     });
 
     CustomizableUI.addListener(listener);
@@ -505,7 +507,7 @@ exports.testForcedMenuHide = function(assert, done) {
     window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
     pv.once("show", function() {
-        setTimeout(() => pv.hide(true), 200);
+        setTimeout(() => pv.hide(true), TIMEOUT);
     });
 
     pv.once("hide", function(event) {
@@ -518,7 +520,7 @@ exports.testForcedMenuHide = function(assert, done) {
             button.destroy();
 
             done();
-        }, 200);
+        }, TIMEOUT);
     });
 
     CustomizableUI.addListener(listener);
