@@ -12,7 +12,7 @@ const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
 
-const TIMEOUT = require("sdk/system").env.TRAVIS ? 2000 : 200;
+const TIMEOUT = require("sdk/system").env.TRAVIS ? 800 : 200;
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
