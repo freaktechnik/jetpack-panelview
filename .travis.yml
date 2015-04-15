@@ -1,20 +1,23 @@
 sudo: false
 language: node_js
 node_js:
-- "0.10"
- 
+- '0.10'
 before_install:
-- "export DISPLAY=:99.0"
-- "sh -e /etc/init.d/xvfb start"
-- "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16 -extension RANDR"
- 
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile
+  --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16 -extension RANDR
 before_script:
 - npm install jpm -g
-- npm install mozilla-download -g
+- npm install fx-download -g
 - cd ..
-- mozilla-download --branch mozilla-central -c prerelease firefox
+- fx-download --branch nightly -c prerelease --host ftp.mozilla.org firefox
 - cd $TRAVIS_BUILD_DIR
- 
 script:
 - export JPM_FIREFOX_BINARY=$TRAVIS_BUILD_DIR/../firefox/firefox
 - jpm test -v
+deploy:
+  provider: npm
+  email: martin@humanoids.be
+  api_key:
+    secure: PcV3fmaK5KjZMZTE7dP2bQd6PZlAbVMjRcuCADLYSesTLNTAAI+GZvpMfI7EuTRZrnGxHWnq9MjV6fkARzRM+uEBRSixaJk1f35HQwpWbn+UShQkACbWXBde70NOwduHIJfxwzHwl9ZdmoAtAM3L51h6rkgWyF7RwPOA9UYt1+4=

@@ -1,0 +1,5 @@
+# Ignore the gitignore and attribute files
+.git*
+
+# Ignore scratch bullshit
+.~
