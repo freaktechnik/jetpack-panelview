@@ -336,7 +336,7 @@ exports.testShowEvent = function(assert, done) {
             button.destroy();
 
             done();
-        }, 200);
+        }, 2000);
     });
     pv.show(button);
 };
