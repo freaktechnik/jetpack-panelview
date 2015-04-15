@@ -2,10 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { MainMenu } = require("./panelview/mainmenu");
+const { MainMenu } = require("../lib/panelview/mainmenu");
 const { ActionButton } = require("sdk/ui");
-const { Cu } = require('chrome');
-const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
+const { CustomizableUI } = require('resource:///modules/CustomizableUI.jsm');
 const { getNodeView } = require("sdk/view/core");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 

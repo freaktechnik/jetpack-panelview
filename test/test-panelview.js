@@ -2,16 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { PanelView } = require("./panelview");
+const { PanelView } = require("../lib/panelview");
 const { ActionButton } = require ("sdk/ui");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
-const { Cu } = require('chrome');
-const { CustomizableUI } = Cu.import('resource:///modules/CustomizableUI.jsm', {});
+const { CustomizableUI } = require('resource:///modules/CustomizableUI.jsm');
 const { getNodeView } = require("sdk/view/core");
-const { MainMenu } = require("./panelview/mainmenu");
+const { MainMenu } = require("../lib/panelview/mainmenu");
 const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
-const workaround = require("panelview/workaround");
+const workaround = require("../lib/panelview/workaround");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
