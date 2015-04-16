@@ -11,6 +11,7 @@ const { MainMenu } = require("../lib/panelview/mainmenu");
 const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
+const { viewFor } = require("sdk/view/core");
 
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 0;
@@ -408,22 +409,20 @@ exports.testShowInOtherWindow = function(assert, done) {
     moveButtonToMenu(button);
 
     pv.once("show", function(event) {
-        setTimeout(() => {
-            assert.ok(pv.isShowing,"Panelview was successfully opened");
+        assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-            pv.hide();
-            pv.destroy();
-            button.destroy();
-            MainMenu.close();
-            newWindow.close();
+        pv.hide();
+        pv.destroy();
+        button.destroy();
+        MainMenu.close();
+        newWindow.close();
 
-            done();
-        }, TIMEOUT);
+        done();
     });
 
-    browserWindows.on("open", () => {
-        getMostRecentBrowserWindow().PanelUI.ensureReady().then(() => {
-            pv.show(button)
+    browserWindows.on("open", (window) => {
+        viewFor(window).PanelUI.ensureReady().then(() => {
+            pv.show(button, viewFor(window));
         });
     });
 
