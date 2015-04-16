@@ -12,7 +12,9 @@ const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
 
-const TIMEOUT = require("sdk/system").env.TRAVIS ? 800 : 200;
+const { env } = require("sdk/system");
+const TIMEOUT = env.TRAVIS ? 800 : 200;
+const TIMEOUT2 = env.TRAVIS ? 500 : 200
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -338,7 +340,7 @@ exports.testShowEvent = function(assert, done) {
             button.destroy();
 
             done();
-        }, TIMEOUT);
+        }, TIMEOUT2);
     });
     pv.show(button);
 };
@@ -362,7 +364,7 @@ exports.testShowProperty = function(assert, done) {
                     button.destroy();
 
                     done();
-                }, TIMEOUT);
+                }, TIMEOUT2);
             }
         }),
         button = createActionButton("test-panelview-showproperty-button");
