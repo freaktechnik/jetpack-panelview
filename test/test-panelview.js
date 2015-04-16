@@ -14,7 +14,7 @@ const workaround = require("../lib/panelview/workaround");
 
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 200;
-const TIMEOUT2 = env.TRAVIS ? 500 : 200
+const TIMEOUT2 = env.TRAVIS ? 500 : 200;
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -364,7 +364,7 @@ exports.testShowProperty = function(assert, done) {
                     button.destroy();
 
                     done();
-                }, TIMEOUT2);
+                }, 200);
             }
         }),
         button = createActionButton("test-panelview-showproperty-button");
@@ -388,9 +388,10 @@ exports.testMenuShow = function(assert, done) {
         CustomizableUI.removeListener(listener);
         pv.destroy();
         button.destroy();
-        setTimeout(() => MainMenu.close(), 100);
-
-        done();
+        setTimeout(() => {
+            MainMenu.close();
+            done();
+        }, 100);
     });
 
     CustomizableUI.addListener(listener);
