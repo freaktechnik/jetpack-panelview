@@ -13,8 +13,8 @@ const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
 
 const { env } = require("sdk/system");
-const TIMEOUT = env.TRAVIS ? 800 : 200;
-const TIMEOUT2 = env.TRAVIS ? 500 : 200;
+const TIMEOUT = env.TRAVIS ? 800 : 0;
+const TIMEOUT2 = env.TRAVIS ? 500 : 0;
 
 getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 
