@@ -18,7 +18,7 @@ exports.testMainMenu = function(assert, done) {
     assert.ok(!MainMenu.isOpen(), "Menu isn't already open");
     MainMenu.open().then(function onPopupShown() {
         var panel = getMostRecentBrowserWindow().PanelUI.panel;
-        setTimeout(function () {
+        setTimeout(function afterOpen() {
             assert.ok(MainMenu.isOpen(), "Menu opend");
 
             panel.addEventListener("popuphidden", function onPopupHidden() {
