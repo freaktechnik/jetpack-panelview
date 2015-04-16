@@ -7,20 +7,28 @@ const { ActionButton } = require("sdk/ui");
 const { CustomizableUI } = require('resource:///modules/CustomizableUI.jsm');
 const { getNodeView } = require("sdk/view/core");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
+const { setTimeout } = require("sdk/timers");
+
+const { env } = require("sdk/system");
+const TIMEOUT = env.TRAVIS ? 800 : 200;
 
 exports.testMainMenu = function(assert, done) {
-    assert.ok(!MainMenu.isOpen(), "Menu is already open");
+    assert.ok(!MainMenu.isOpen(), "Menu isn't already open");
     getMostRecentBrowserWindow().PanelUI.panel.addEventListener("popupshown", function onPopupShown() {
         this.removeEventListener("popupshown", onPopupShown);
-        assert.ok(MainMenu.isOpen(), "Menu did not open");
+        setTimeout(function () {
+            assert.ok(MainMenu.isOpen(), "Menu opend");
 
-        this.addEventListener("popuphidden", function onPopupHidden() {
-            this.removeEventListener("popuphidden", onPopupHidden);
-            assert.ok(!MainMenu.isOpen(), "Menu did not close");
-            done();
-        });
+            this.addEventListener("popuphidden", function onPopupHidden() {
+                this.removeEventListener("popuphidden", onPopupHidden);
+                setTimeout(function() {
+                    assert.ok(!MainMenu.isOpen(), "Menu closed");
+                    done();
+                }, TIMEOUT);
+            });
 
-        MainMenu.close();
+            MainMenu.close();
+        }, TIMEOUT);
     });
 
     MainMenu.open();

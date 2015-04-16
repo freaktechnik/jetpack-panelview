@@ -364,7 +364,7 @@ exports.testShowProperty = function(assert, done) {
                     button.destroy();
 
                     done();
-                }, 200);
+                }, TIMEOUT);
             }
         }),
         button = createActionButton("test-panelview-showproperty-button");
