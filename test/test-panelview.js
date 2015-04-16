@@ -408,15 +408,17 @@ exports.testShowInOtherWindow = function(assert, done) {
     moveButtonToMenu(button);
 
     pv.once("show", function(event) {
-        assert.ok(pv.isShowing,"Panelview was successfully opened");
+        setTimeout(() => {
+            assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-        pv.hide();
-        pv.destroy();
-        button.destroy();
-        MainMenu.close();
-        newWindow.close();
+            pv.hide();
+            pv.destroy();
+            button.destroy();
+            MainMenu.close();
+            newWindow.close();
 
-        done();
+            done();
+        }, TIMEOUT);
     });
 
     browserWindows.on("open", () => {
