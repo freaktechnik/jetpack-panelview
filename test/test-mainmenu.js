@@ -12,11 +12,12 @@ const { setTimeout } = require("sdk/timers");
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 200;
 
+getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
+
 exports.testMainMenu = function(assert, done) {
     assert.ok(!MainMenu.isOpen(), "Menu isn't already open");
-    getMostRecentBrowserWindow().PanelUI.panel.addEventListener("popupshown", function onPopupShown() {
-        this.removeEventListener("popupshown", onPopupShown);
-        var panel = this;
+    MainMenu.open().then(function onPopupShown() {
+        var panel = getMostRecentBrowserWindow().PanelUI.panel;
         setTimeout(function () {
             assert.ok(MainMenu.isOpen(), "Menu opend");
 
@@ -31,8 +32,6 @@ exports.testMainMenu = function(assert, done) {
             MainMenu.close();
         }, TIMEOUT);
     });
-
-    MainMenu.open();
 };
 
 exports.testContains = function(assert) {

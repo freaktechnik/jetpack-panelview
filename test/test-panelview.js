@@ -16,6 +16,8 @@ const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 200;
 const TIMEOUT2 = env.TRAVIS ? 500 : 200;
 
+getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
+
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
 
@@ -417,7 +419,11 @@ exports.testShowInOtherWindow = function(assert, done) {
         done();
     });
 
-    browserWindows.on("open", () => setTimeout(() => pv.show(button), 9000));
+    browserWindows.on("open", () => {
+        getMostRecentBrowserWindow().PanelUI.ensureReady().then(() => {
+            pv.show(button)
+        });
+    });
 
     var newWindow = browserWindows.open("about:home");
 };
