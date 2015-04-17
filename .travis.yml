@@ -17,5 +17,7 @@ script:
 deploy:
   provider: npm
   email: martin@humanoids.be
+  on:
+    tags: true
   api_key:
     secure: PcV3fmaK5KjZMZTE7dP2bQd6PZlAbVMjRcuCADLYSesTLNTAAI+GZvpMfI7EuTRZrnGxHWnq9MjV6fkARzRM+uEBRSixaJk1f35HQwpWbn+UShQkACbWXBde70NOwduHIJfxwzHwl9ZdmoAtAM3L51h6rkgWyF7RwPOA9UYt1+4=
