@@ -3,3 +3,4 @@
 *.md
 docs/
 *~
+node_modules/jpm

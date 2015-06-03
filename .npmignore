@@ -1,5 +1,8 @@
 # Ignore the gitignore and attribute files
 .git*
 
+# Ignore built xpis
+*.xpi
+
 # Ignore scratch bullshit
 .~
