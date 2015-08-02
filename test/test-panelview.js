@@ -12,6 +12,7 @@ const { setTimeout, removeTimeout } = require("sdk/timers");
 const { browserWindows } = require("sdk/windows");
 const workaround = require("../lib/panelview/workaround");
 const { viewFor } = require("sdk/view/core");
+const { wait } = require("./event/helpers");
 
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 0;
@@ -22,49 +23,45 @@ getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
 
-function createPanelView(testId) {
-    return PanelView({
-        id: testId,
-        title: 'testView',
-        content: [
-            {
-                label: 'an action',
-                type: 'button',
-                onClick: function() {
-                    buttonTest = "successful";
-                }
-                //TODO test icon
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'a checkbox',
-                type: 'button',
-                actionType: 'checkbox',
-                onClick: function() {
-                    //nothing
-                }
-            }
-        ],
-        footer: {
-            label: 'footer',
+let createPanelView = (testId) => PanelView({
+    id: testId,
+    title: 'testView',
+    content: [
+        {
+            label: 'an action',
+            type: 'button',
             onClick: function() {
-                buttonTest = "footer";
+                buttonTest = "successful";
+            }
+            //TODO test icon
+        },
+        {
+            type: 'separator'
+        },
+        {
+            label: 'a checkbox',
+            type: 'button',
+            actionType: 'checkbox',
+            onClick: function() {
+                //nothing
             }
         }
-    });
-}
+    ],
+    footer: {
+        label: 'footer',
+        onClick: function() {
+            buttonTest = "footer";
+        }
+    }
+});
 
-function createActionButton(buttonId) {
-    return ActionButton({
-        id: buttonId,
-        label: "Test button",
-        icon: module.uri.replace(/[^\.\\\/]*\.js$/, "test-icon.png")
-    });
-}
+let createActionButton = (buttonId) => ActionButton({
+    id: buttonId,
+    label: "Test button",
+    icon: module.uri.replace(/[^\.\\\/]*\.js$/, "test-icon.png")
+});
 
-function moveButtonToMenu(button) {
+let moveButtonToMenu = (button) => {
     // move button to menu panel
     workaround.applyButtonFix(button);
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
@@ -222,86 +219,43 @@ exports.testConstruction = function(assert) {
 
     pv.destroy();
 };
-/* disabled, since it never completes
-exports.testButtons = function(assert, done) {
+
+exports.testButtons = function*(assert) {
     var pv = createPanelView("test-panelview-buttons"),
         button = createActionButton("test-panelview-buttons-button"),
-        document = getMostRecentBrowserWindow().document,
+        { document } = getMostRecentBrowserWindow(),
         content = document.getElementById(pv.id).getElementsByClassName("panel-subview-body")[0],
-        buttonNo = 0,
-        buttonTestVal = buttonTest,
-        buttons = content.getElementsByClassName("subviewbutton"),
-        shouldHide = true,
-        next = false,
-        timer;
+        buttons = content.getElementsByClassName("subviewbutton");
 
-    pv.on("show", show);
-    pv.on("hide", hide);
+    yield pv.show(button);
 
-    pv.show(button);
+    let promise = wait(pv, "hide");
 
-    function hide() {
-        if(!next) {
-            next = true;
-            assert.equal(buttonTest, buttonTestVal, "Action click handler not working properly");
-            if(shouldHide)
-                assert.pass("Panel closed after command on regular content button");
-            else {
-                assert.fail("Panel closed after command on checkbox item");
-                removeTimeout(timer);
-            }
+    // click on the normal button
+    buttons[0].click();
 
-            if(++buttonNo == buttons.length)
-                allDone();
-            else
-                pv.show(button);
-        }
-        else
-            pv.show(button);
-    }
-    function show() {
-        next = false;
-        if(buttons[buttonNo].type == "checkbox") {
-            shouldHide = false;
-            buttonTest = "nothing";
-            buttonTestVal = "nothing";
-        }
-        else {
-            buttonTestVal = "successful";
-            shouldHide = true;
-        }
+    console.log("Waiting for hide");
 
-        if(!shouldHide) {
-            timer = setTimeout(hideCheck, 200);
-        }
+    yield promise;
 
-        buttons[buttonNo].click();
-    }
-    function hideCheck() {
-        if(!next) {
-            next = true;
-            assert.equal(buttonTest, buttonTestVal, "Action click handler not working properly");
-            if(!shouldHide)
-                assert.pass("Panel didn't close after clicking on checkbox item");
-            else
-                assert.fail("Panel didn't hide");
+    assert.equal(buttonTest, "successful");
+    buttonTest = "nothing";
 
-            if(++buttonNo == buttons.length)
-                allDone();
-            else {
-                pv.hide();
-            }
-        }
-    }
+    yield pv.show(button);
 
-    function allDone() {
-        pv.off("show", show);
-        pv.off("hide", hide);
-        pv.destroy();
-        button.destroy();
-        done();
-    }
-};*/
+    // click on the checkbox
+    buttons[1].click();
+
+    // checkboxes shouldn't hide nothing
+    yield wait(TIMEOUT);
+
+    assert.ok(pv.isShowing);
+    assert.equal(buttonTest, "nothing");
+
+    pv.hide();
+    pv.destroy();
+    button.destroy();
+};
 
 exports.testDestroy = function(assert) {
     let document = getMostRecentBrowserWindow().document;
@@ -327,25 +281,21 @@ exports.testShow = function(assert) {
     pv.destroy();
 };
 
-exports.testShowEvent = function(assert, done) {
+exports.testShowEvent = function*(assert) {
     var pv = createPanelView("test-panelview-showevent"),
         button = createActionButton("test-panelview-showevent-button");
 
     let window = getMostRecentBrowserWindow();
     window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
 
-    pv.once("show", function(event) {
-        setTimeout(function() {
-            assert.ok(pv.isShowing,"Panelview was successfully opened");
+    yield pv.show(button);
+    yield TIMEOUT2;
+    assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-            pv.hide();
-            pv.destroy();
-            button.destroy();
+    pv.hide();
 
-            done();
-        }, TIMEOUT2);
-    });
-    pv.show(button);
+    pv.destroy();
+    button.destroy();
 };
 
 exports.testShowProperty = function(assert, done) {
@@ -394,7 +344,7 @@ exports.testMenuShow = function(assert, done) {
         setTimeout(() => {
             MainMenu.close();
             done();
-        }, 100);
+        }, TIMEOUT2);
     });
 
     CustomizableUI.addListener(listener);
@@ -402,48 +352,40 @@ exports.testMenuShow = function(assert, done) {
     moveButtonToMenu(button);
 };
 
-exports.testShowInOtherWindow = function(assert, done) {
+exports.testShowInOtherWindow = function(assert) {
     var pv = createPanelView("test-panelview-menushow"),
         button = createActionButton("test-panelview-menushow-button");
 
     moveButtonToMenu(button);
 
-    pv.once("show", function(event) {
-        assert.ok(pv.isShowing,"Panelview was successfully opened");
-
-        pv.hide();
-        pv.destroy();
-        button.destroy();
-        MainMenu.close();
-        newWindow.close();
-
-        done();
-    });
-
-    browserWindows.on("open", (window) => {
-        viewFor(window).PanelUI.ensureReady().then(() => {
-            pv.show(button, viewFor(window));
-        });
-    });
-
     var newWindow = browserWindows.open("about:home");
+
+    yield wait(browserWindows, "open");
+
+    yield viewFor(newWindow).PanelUI.ensureReady();
+    yield pv.show(button, viewFor(newWindow));
+
+    assert.ok(pv.isShowing,"Panelview was successfully opened");
+
+    pv.hide();
+    pv.destroy();
+    button.destroy();
+    MainMenu.close();
+    newWindow.close();
 };
 
 
-exports.testHideEvent = function(assert, done) {
+exports.testHideEvent = function*(assert) {
     var pv = createPanelView("test-panelview-hideevent"),
         button = createActionButton("test-panelview-hideevent-button");
 
-    pv.once("hide", function(event) {
-        assert.ok(!pv.isShowing,"Panelview was successfully closed");
+    yield pv.show(button);
+    yield pv.hide();
 
-        pv.destroy();
-        button.destroy();
+    assert.ok(!pv.isShowing,"Panelview was successfully closed");
 
-        done();
-    });
-    pv.show(button);
-    pv.hide();
+    pv.destroy();
+    button.destroy();
 };
 
 exports.testHideProperty = function(assert, done) {
@@ -466,8 +408,7 @@ exports.testHideProperty = function(assert, done) {
             }
         }),
         button = createActionButton("test-panelview-hideproperty-button");
-    pv.show(button);
-    pv.hide();
+    pv.show(button).then(pv.hide());
 };
 
 exports.testMenuHide = function(assert, done) {

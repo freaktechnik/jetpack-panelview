@@ -8,28 +8,25 @@ const { CustomizableUI } = require('resource:///modules/CustomizableUI.jsm');
 const { getNodeView } = require("sdk/view/core");
 const { getMostRecentBrowserWindow } = require('sdk/window/utils');
 const { setTimeout } = require("sdk/timers");
-
+const { wait } = require("./event/helpers");
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 200;
 
 getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 
-exports.testMainMenu = function(assert, done) {
+exports.testMainMenu = function*(assert) {
+    yield getMostRecentBrowserWindow().PanelUI.ensureReady();
+
     assert.ok(!MainMenu.isOpen(), "Menu isn't already open");
-    MainMenu.open().then(function onPopupShown() {
-        var panel = getMostRecentBrowserWindow().PanelUI.panel;
-        assert.ok(MainMenu.isOpen(), "Menu opened");
 
-        panel.addEventListener("popuphidden", function onPopupHidden() {
-            this.removeEventListener("popuphidden", onPopupHidden);
-            setTimeout(function() {
-                assert.ok(!MainMenu.isOpen(), "Menu closed");
-                done();
-            }, TIMEOUT);
-        });
+    yield MainMenu.open();
+    yield wait(TIMEOUT);
+    assert.ok(MainMenu.isOpen(), "Menu opened");
 
-        MainMenu.close();
-    });
+    yield MainMenu.close();
+    yield wait(TIMEOUT);
+
+    assert.ok(!MainMenu.isOpen(), "Menu closed");
 };
 
 exports.testContains = function(assert) {
@@ -38,13 +35,14 @@ exports.testContains = function(assert) {
         label: "Test button",
         icon: module.uri.replace(/[^\.\\\/]*\.js$/, "test-icon.png")
     });
+    let buttonId = getNodeView(button).id;
 
-    assert.notEqual(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button is already in menu panel");
+    assert.notEqual(CustomizableUI.getPlacementOfWidget(buttonId).area, CustomizableUI.AREA_PANEL, "Button is already in menu panel");
     assert.ok(!MainMenu.contains(button), "Button was detected in Panel, even though it isn't in there");
 
     // move button to menu panel
-    CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
-    assert.equal(CustomizableUI.getPlacementOfWidget(getNodeView(button).id).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
+    CustomizableUI.addWidgetToArea(buttonId, CustomizableUI.AREA_PANEL);
+    assert.equal(CustomizableUI.getPlacementOfWidget(buttonId).area, CustomizableUI.AREA_PANEL, "Button was not moved into the menu panel");
 
     assert.ok(MainMenu.contains(button), "Button not detected in Panel");
 
