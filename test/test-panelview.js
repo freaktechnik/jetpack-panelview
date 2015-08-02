@@ -234,8 +234,6 @@ exports.testButtons = function*(assert) {
     // click on the normal button
     buttons[0].click();
 
-    console.log("Waiting for hide");
-
     yield promise;
 
     assert.equal(buttonTest, "successful");
