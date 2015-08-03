@@ -67,7 +67,6 @@ const wait = (target, type, capture) => {
   else {
     reject('Invalid target given.');
   }
-
   return promise;
 };
 exports.wait = wait;

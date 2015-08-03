@@ -17,7 +17,10 @@ const { wait } = require("./event/helpers");
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 0;
 
-getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
+let win = getMostRecentBrowserWindow();
+
+win.PanelUI.disableSingleSubviewPanelAnimations();
+win.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
@@ -284,9 +287,6 @@ exports.testShowEvent = function*(assert) {
     var pv = createPanelView("test-panelview-showevent"),
         button = createActionButton("test-panelview-showevent-button");
 
-    let window = getMostRecentBrowserWindow();
-    window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
-
     yield pv.show(button);
     assert.ok(pv.isShowing,"Panelview was successfully opened");
 
@@ -401,9 +401,6 @@ exports.testMenuHide = function*(assert) {
     var pv = createPanelView("test-panelview-menuhide"),
         button = createActionButton("test-panelview-menuhide-button");
 
-    let window = getMostRecentBrowserWindow();
-    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
-
     yield moveButtonToMenu(button);
     yield pv.show(button);
     yield pv.hide();
@@ -419,9 +416,6 @@ exports.testMenuHide = function*(assert) {
 exports.testForcedMenuHide = function*(assert) {
     var pv = createPanelView("test-panelview-forcedmenuhide"),
         button = createActionButton("test-panelview-forcedmenuhide-button");
-
-    let window = getMostRecentBrowserWindow();
-    window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
     yield moveButtonToMenu(button);
     yield pv.show(button);
