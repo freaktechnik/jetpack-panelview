@@ -53,6 +53,14 @@ const wait = (target, type, capture) => {
   else if (typeof(target.addEventListener) === "function") {
     return domWhen(target, type, capture);
   }
+  else if(typeof(target.addListener) === "function") {
+    let listener = {};
+    listener[type] = () => {
+        target.removeListener(listener);
+        resolve();
+    };
+    target.addListener(listener);
+  }
   else if (typeof(target) === "object" && target !== null) {
     return eWhen(target, type, resolve);
   }

@@ -16,7 +16,6 @@ const { wait } = require("./event/helpers");
 
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 0;
-const TIMEOUT2 = env.TRAVIS ? 500 : 0;
 
 getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 
@@ -64,8 +63,10 @@ let createActionButton = (buttonId) => ActionButton({
 let moveButtonToMenu = (button) => {
     // move button to menu panel
     workaround.applyButtonFix(button);
+    let promise = wait(CustomizableUI, "onWidgetAdded");
     CustomizableUI.addWidgetToArea(getNodeView(button).id, CustomizableUI.AREA_PANEL);
-}
+    return promise;
+};
 
 exports.testContract = function(assert) {
     //copied from test-ui-action-button
@@ -287,7 +288,6 @@ exports.testShowEvent = function*(assert) {
     window.document.getElementById("test-panelview-showevent").panelMultiView.removeAttribute("transitioning");
 
     yield pv.show(button);
-    yield TIMEOUT2;
     assert.ok(pv.isShowing,"Panelview was successfully opened");
 
     pv.hide();
@@ -322,32 +322,20 @@ exports.testShowProperty = function(assert, done) {
     pv.show(button);
 };
 
-exports.testMenuShow = function(assert, done) {
+exports.testMenuShow = function*(assert) {
     var pv = createPanelView("test-panelview-menushow"),
-        button = createActionButton("test-panelview-menushow-button"),
-        listener = {
-            onWidgetAdded: function() {
-                pv.show(button);
-            }
-        };
+        button = createActionButton("test-panelview-menushow-button");
 
+    yield moveButtonToMenu(button);
 
-    pv.once("show", function(event) {
-        assert.ok(pv.isShowing,"Panelview was successfully opened");
+    yield pv.show(button);
 
-        pv.hide();
-        CustomizableUI.removeListener(listener);
-        pv.destroy();
-        button.destroy();
-        setTimeout(() => {
-            MainMenu.close();
-            done();
-        }, TIMEOUT2);
-    });
+    assert.ok(pv.isShowing,"Panelview was successfully opened");
 
-    CustomizableUI.addListener(listener);
-
-    moveButtonToMenu(button);
+    pv.hide();
+    pv.destroy();
+    button.destroy();
+    MainMenu.close();
 };
 
 exports.testShowInOtherWindow = function(assert) {
@@ -409,71 +397,41 @@ exports.testHideProperty = function(assert, done) {
     pv.show(button).then(pv.hide());
 };
 
-exports.testMenuHide = function(assert, done) {
+exports.testMenuHide = function*(assert) {
     var pv = createPanelView("test-panelview-menuhide"),
-        button = createActionButton("test-panelview-menuhide-button"),
-        listener = {
-            onWidgetAdded: function() {
-                pv.show(button);
-            }
-        };
+        button = createActionButton("test-panelview-menuhide-button");
 
     let window = getMostRecentBrowserWindow();
     window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
-    pv.once("show", function() {
-        setTimeout(() => pv.hide(), TIMEOUT);
-    });
+    yield moveButtonToMenu(button);
+    yield pv.show(button);
+    yield pv.hide();
 
-     pv.once("hide", function(event) {
-        setTimeout(function() {
-            assert.ok(!pv.isShowing, "Panelview was successfully closed");
+    assert.ok(!pv.isShowing, "Panelview was successfully closed");
 
-            CustomizableUI.removeListener(listener);
-            pv.destroy();
-            button.destroy();
+    pv.destroy();
+    button.destroy();
 
-            MainMenu.close();
-
-            done();
-        }, TIMEOUT);
-    });
-
-    CustomizableUI.addListener(listener);
-    moveButtonToMenu(button);
+    MainMenu.close();
 };
 
-exports.testForcedMenuHide = function(assert, done) {
+exports.testForcedMenuHide = function*(assert) {
     var pv = createPanelView("test-panelview-forcedmenuhide"),
-        button = createActionButton("test-panelview-forcedmenuhide-button"),
-        listener = {
-            onWidgetAdded: function() {
-                pv.show(button);
-            }
-        };
+        button = createActionButton("test-panelview-forcedmenuhide-button");
 
     let window = getMostRecentBrowserWindow();
     window.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
-    pv.once("show", function() {
-        setTimeout(() => pv.hide(true), TIMEOUT);
-    });
+    yield moveButtonToMenu(button);
+    yield pv.show(button);
+    yield pv.hide(true);
 
-    pv.once("hide", function(event) {
-        setTimeout(function() {
-            assert.ok(!pv.isShowing, "Panelview was successfully closed");
-            assert.ok(!MainMenu.isOpen(), "Menu was successfully closed");
+    assert.ok(!pv.isShowing, "Panelview was successfully closed");
+    assert.ok(!MainMenu.isOpen(), "Menu was successfully closed");
 
-            CustomizableUI.removeListener(listener);
-            pv.destroy();
-            button.destroy();
-
-            done();
-        }, TIMEOUT);
-    });
-
-    CustomizableUI.addListener(listener);
-    moveButtonToMenu(button);
+    pv.destroy();
+    button.destroy();
 };
 
 require('sdk/test').run(exports);
