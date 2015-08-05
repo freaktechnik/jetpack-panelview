@@ -62,7 +62,7 @@ const wait = (target, type, capture) => {
     target.addListener(listener);
   }
   else if (typeof(target) === "object" && target !== null) {
-    return eWhen(target, type, resolve);
+    return eWhen(target, type, capture);
   }
   else {
     reject('Invalid target given.');
