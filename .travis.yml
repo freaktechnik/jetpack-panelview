@@ -8,8 +8,7 @@ before_install:
 before_script:
 - npm install jpm get-firefox -g
 - cd ..
-- get-firefox -p linux -t firefox.tar.bz2
-- tar -xjf firefox.tar.bz2
+- get-firefox -cvep linux
 - cd $TRAVIS_BUILD_DIR
 script:
 - export JPM_FIREFOX_BINARY=$TRAVIS_BUILD_DIR/../firefox/firefox
