@@ -16,5 +16,8 @@
     },
     "bugs": {
       "url": "https://github.com/freaktechnik/jetpack-panelview/issues"
+    },
+    "permissions": {
+      "multiprocess": true
     }
 }
