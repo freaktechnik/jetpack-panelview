@@ -25,30 +25,45 @@ win.document.getElementById("PanelUI-multiView").removeAttribute("transitioning"
 //yes, I feel dirty for doing this.
 var buttonTest = "waiting";
 
+let assertArray = (assert, is, should) => {
+    assert.equal(is.length, should.length);
+    is.forEach((e, i) => {
+        assert.equal(e.type, should[i].type);
+        if(e.type == "button") {
+            assert.equal(e.label, should[i].label);
+            assert.equal(typeof(e.onClick), typeof(should[i].onClick));
+            if("actionType" in e)
+                assert.equal(e.actionType, should[i].actionType);
+        }
+    });
+};
+
+let getContent = () => [
+    {
+        label: 'an action',
+        type: 'button',
+        onClick: function() {
+            buttonTest = "successful";
+        }
+        //TODO test icon
+    },
+    {
+        type: 'separator'
+    },
+    {
+        label: 'a checkbox',
+        type: 'button',
+        actionType: 'checkbox',
+        onClick: function() {
+            //nothing
+        }
+    }
+];
+
 let createPanelView = (testId) => PanelView({
     id: testId,
     title: 'testView',
-    content: [
-        {
-            label: 'an action',
-            type: 'button',
-            onClick: function() {
-                buttonTest = "successful";
-            }
-            //TODO test icon
-        },
-        {
-            type: 'separator'
-        },
-        {
-            label: 'a checkbox',
-            type: 'button',
-            actionType: 'checkbox',
-            onClick: function() {
-                //nothing
-            }
-        }
-    ],
+    content: getContent(),
     footer: {
         label: 'footer',
         onClick: function() {
@@ -426,6 +441,29 @@ exports.testForcedMenuHide = function*(assert) {
 
     pv.destroy();
     button.destroy();
+};
+
+exports.testGettingActions = function(assert) {
+    let pv = createPanelView("test-panelview-gettingactions");
+    assertArray(assert, pv.content, getContent());
+    
+    pv.destroy();
+};
+
+exports.testSettingActions = function(assert) {
+    let pv = createPanelView("test-panelview-setactions");
+    assertArray(assert, pv.content, getContent());
+
+    let newContent = [{
+        label: 'action',
+        type: 'button',
+        onClick: function() {}
+    }];
+
+    pv.content = newContent;
+    assertArray(assert, pv.content, newContent);
+    
+    pv.destroy();
 };
 
 require('sdk/test').run(exports);
