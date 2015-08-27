@@ -77,7 +77,7 @@ To use an SDK Action button or ToggleButton (recommended) together with a panelv
 You can easily apply the fix:
 ```js
     let button = ToggleButton({...});
-    require("panelview/workaround").applyButtonFix(button);
+    require("jetpack-panelview/lib/panelview/workaround").applyButtonFix(button);
 ```
 This fix currently doesn't work correctly with windows opened after the function is called, even though the code for it is in place.
 
