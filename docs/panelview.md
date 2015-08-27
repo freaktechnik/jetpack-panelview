@@ -1,4 +1,4 @@
-The `panelview` module provides a simple way to create a Panelview/Subview like the History or Bookmarks panels offer in Australis.
+The `jetpack-panelview` module provides a simple way to create a Panelview/Subview like the History or Bookmarks panels offer in Australis.
 
 ## Usage ##
 This module exports a single constructor function `PanelView` which constructs a panelview object.
@@ -6,14 +6,14 @@ This module exports a single constructor function `PanelView` which constructs a
 A panelview is like a menu but can additionally have a header and a footer. The header is only displayed when opened inside the menu. The benefits of using a panelview over a menu or even a normal panel is that it opens as a subview when the button is inside the menu.
 Even though it could probably contain other things than just menu items, you can currently only add menu items and separators to a panelview. Due to the XUL element being poorly documentated (the only real documentation is existing code...), it is uncertain how the element is intended to be used.
 
-`panelview` exposes a similar API to `sdk/panel`, however it offers less functionality, due to the content restrictions.
+`jetpack-panelview` exposes a similar API to `sdk/panel`, however it offers less functionality, due to the content restrictions.
 
 For the usage of third party libraries together with the SDK, check out [this Toutorial](https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Add_a_Menu_Item_to_Firefox).
 
 ### Content Items ###
 When constructing a panelview you have to add content items. These may either be buttons or separators.
 ```js
-var { PanelView } = require("panelview");
+var { PanelView } = require("jetpack-panelview");
 
 let pv = PanelView({
         id: 'demo-panelview',
