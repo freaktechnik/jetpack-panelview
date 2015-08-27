@@ -148,6 +148,8 @@ Same as `removeListener`.
 The ID of the PanelView
 #### isShowing ####
 Returns true if the panelview is currently either displayed as a standalone panel or in the menu panel. Consider this method unreliable due to transitioning times.
+#### content #####
+Get and replace the current contents. Modifying the array won't affect the actual contents, you have to replace it.
 ### Events ###
 #### show ####
 This event is emitted whenever the panelview gets displayed.
