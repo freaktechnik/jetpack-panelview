@@ -16,6 +16,7 @@ getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 
 exports.testMainMenu = function*(assert) {
     let window = getMostRecentBrowserWindow();
+    window.focus();
     yield window.PanelUI.ensureReady();
 
     assert.ok(!MainMenu.isOpen(window), "Menu isn't already open");
