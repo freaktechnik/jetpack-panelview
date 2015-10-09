@@ -19,6 +19,8 @@ const TIMEOUT = env.TRAVIS ? 800 : 0;
 
 let win = getMostRecentBrowserWindow();
 
+//TODO test button icons
+
 win.PanelUI.disableSingleSubviewPanelAnimations();
 win.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
@@ -446,7 +448,7 @@ exports.testForcedMenuHide = function*(assert) {
 exports.testGettingActions = function(assert) {
     let pv = createPanelView("test-panelview-gettingactions");
     assertArray(assert, pv.content, getContent());
-    
+
     pv.destroy();
 };
 
@@ -462,7 +464,7 @@ exports.testSettingActions = function(assert) {
 
     pv.content = newContent;
     assertArray(assert, pv.content, newContent);
-    
+
     pv.destroy();
 };
 
