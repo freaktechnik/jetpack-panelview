@@ -15,18 +15,19 @@ const TIMEOUT = env.TRAVIS ? 800 : 200;
 getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
 
 exports.testMainMenu = function*(assert) {
-    yield getMostRecentBrowserWindow().PanelUI.ensureReady();
+    let window = getMostRecentBrowserWindow();
+    yield window.PanelUI.ensureReady();
 
-    assert.ok(!MainMenu.isOpen(), "Menu isn't already open");
+    assert.ok(!MainMenu.isOpen(window), "Menu isn't already open");
 
-    yield MainMenu.open();
+    yield MainMenu.open(window);
     yield wait(TIMEOUT);
-    assert.ok(MainMenu.isOpen(), "Menu opened");
+    assert.ok(MainMenu.isOpen(window), "Menu opened");
 
-    yield MainMenu.close();
+    yield MainMenu.close(window);
     yield wait(TIMEOUT);
 
-    assert.ok(!MainMenu.isOpen(), "Menu closed");
+    assert.ok(!MainMenu.isOpen(window), "Menu closed");
 };
 
 exports.testContains = function(assert) {
