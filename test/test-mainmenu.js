@@ -12,12 +12,10 @@ const { wait } = require("./event/helpers");
 const { env } = require("sdk/system");
 const TIMEOUT = env.TRAVIS ? 800 : 200;
 
-getMostRecentBrowserWindow().PanelUI.disableSingleSubviewPanelAnimations();
-
 exports.testMainMenu = function*(assert) {
     let window = getMostRecentBrowserWindow();
-    window.focus();
     yield window.PanelUI.ensureReady();
+    window.PanelUI.disableSingleSubviewPanelAnimations();
 
     assert.ok(!MainMenu.isOpen(window), "Menu isn't already open");
 

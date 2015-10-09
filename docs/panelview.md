@@ -72,6 +72,8 @@ In order to show the PanelView you need to call its show method, as shown in thi
         });
 ```
 
+Don't forget to add an icon, else the button will be invisible.
+
 #### Fixing SDK buttons in the Menu Panel ####
 To use an SDK Action button or ToggleButton (recommended) together with a panelview you will have to apply a fix to the button, so the menu panel doesn't close when clicked on the button in the panel.
 You can easily apply the fix:

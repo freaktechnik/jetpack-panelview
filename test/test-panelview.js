@@ -44,8 +44,10 @@ let getContent = () => [
         type: 'button',
         onClick: function() {
             buttonTest = "successful";
+        },
+        icon: {
+            "16": "./test-icon.png"
         }
-        //TODO test icon
     },
     {
         type: 'separator'
@@ -312,7 +314,8 @@ exports.testShowEvent = function*(assert) {
 };
 
 exports.testShowProperty = function(assert, done) {
-    var pv = PanelView({
+    var button = createActionButton("test-panelview-showproperty-button"),
+        pv = PanelView({
             id: "test-panelview-showproperty",
             title: "Test Panel",
             content: [
@@ -332,8 +335,7 @@ exports.testShowProperty = function(assert, done) {
                     done();
                 }, TIMEOUT);
             }
-        }),
-        button = createActionButton("test-panelview-showproperty-button");
+        });
     pv.show(button);
 };
 
