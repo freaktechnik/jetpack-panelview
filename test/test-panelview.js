@@ -19,8 +19,6 @@ const TIMEOUT = env.TRAVIS ? 800 : 0;
 
 let win = getMostRecentBrowserWindow();
 
-//TODO test button icons
-
 win.PanelUI.disableSingleSubviewPanelAnimations();
 win.document.getElementById("PanelUI-multiView").removeAttribute("transitioning");
 
