@@ -3,7 +3,7 @@
     "name": "jetpack-panelview",
     "description": "Create Firefox subview panels introduced in Australis with jetpack",
     "author": "freaktechnik (http://humanoids.be)",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "license": "MPL-2.0",
     "main": "lib/panelview.js",
     "keywords": ["add-on sdk", "jetpack", "firefox", "menu", "panel"],
