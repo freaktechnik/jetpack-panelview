@@ -326,7 +326,7 @@ exports.testShowProperty = function(assert, done) {
             ],
             onShow: function(event) {
                 setTimeout(function() {
-                    assert.ok(pv.isShowing,"Panelview was successfully opened");
+                    assert.ok(pv.isShowing, "Panelview was successfully opened");
 
                     pv.hide();
                     pv.destroy();
