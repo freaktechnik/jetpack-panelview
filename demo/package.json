@@ -1,0 +1,18 @@
+{
+  "title": "Jetpack PanelView",
+  "name": "demo-panelview",
+  "version": "0.1.0",
+  "description": "A basic add-on",
+  "main": "index.js",
+  "author": "Alexander J. Salas B. (a.salas@ieee.org)",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MPL-2.0",
+  "keywords": [
+    "jetpack"
+  ],
+  "dependencies": {
+    "jetpack-panelview": "^0.2.3"
+  }
+}
