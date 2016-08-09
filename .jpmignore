@@ -1,7 +1,8 @@
 *.xpi
 .*
 *.md
-docs/
+docs
 *~
-node_modules/jpm
+node_modules
 demo/
+test

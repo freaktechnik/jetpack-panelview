@@ -1,23 +1,35 @@
 {
-    "title":"Jetpack Panelview",
-    "name": "jetpack-panelview",
-    "description": "Create Firefox subview panels introduced in Australis with jetpack",
-    "author": "freaktechnik (http://humanoids.be)",
-    "version": "0.2.3",
-    "license": "MPL-2.0",
-    "main": "lib/panelview.js",
-    "keywords": ["add-on sdk", "jetpack", "firefox", "menu", "panel"],
-    "engines": {
-      "firefox": ">=29"
-    },
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/freaktechnik/jetpack-panelview.git"
-    },
-    "bugs": {
-      "url": "https://github.com/freaktechnik/jetpack-panelview/issues"
-    },
-    "permissions": {
-      "multiprocess": true
-    }
+  "title": "Jetpack Panelview",
+  "name": "jetpack-panelview",
+  "description": "Create Firefox subview panels introduced in Australis with jetpack",
+  "author": "freaktechnik (http://humanoids.be)",
+  "version": "0.2.4",
+  "license": "MPL-2.0",
+  "main": "lib/panelview.js",
+  "keywords": [
+    "add-on sdk",
+    "jetpack",
+    "firefox",
+    "menu",
+    "panel"
+  ],
+  "engines": {
+    "firefox": ">=29"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freaktechnik/jetpack-panelview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freaktechnik/jetpack-panelview/issues"
+  },
+  "permissions": {
+    "multiprocess": true
+  },
+  "scripts": {
+    "test": "jpm test -v"
+  },
+  "devDependencies": {
+    "jpm": "^1.1.3"
+  }
 }
