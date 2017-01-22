@@ -1,6 +1,8 @@
 jetpack-panelview
 =================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/freaktechnik/jetpack-panelview.svg)](https://greenkeeper.io/)
+
 Firefox Add-on SDK module to easily create panelview (the menus the history/favorites buttons use) for australis.
 
 License
